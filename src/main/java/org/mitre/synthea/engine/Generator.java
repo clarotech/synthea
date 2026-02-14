@@ -133,7 +133,10 @@ public class Generator {
   // ANSI color codes for terminal output. Used to color the donation request at the end of a run.
   private static final String ANSI_GREEN = "\u001B[32m";
   private static final String ANSI_BLUE = "\u001B[34m";
+  private static final String ANSI_BRIGHT_RED = "\u001B[91m";
   private static final String ANSI_RESET = "\u001B[0m";
+
+  private static final String ANSI_BG_YELLOW = "\u001B[43m";
 
   // Link to donation page used in the donation request at the end of a run.
   private static final String DONATION_LINK = "https://github.com/sponsors/synthetichealth";
@@ -470,7 +473,7 @@ public class Generator {
     }
     Exporter.runPostCompletionExports(this, exporterRuntimeOptions);
 
-    System.out.printf("ClaroTech - UK Variant for Synthea");
+    System.out.printf("\n\n%s%s   ClaroTech - UK Variant for Synthea   %s\n\n",ANSI_BLUE,ANSI_BG_YELLOW,ANSI_RESET);
 
     System.out.printf("Records: total=%d, alive=%d, dead=%d\n", totalGeneratedPopulation.get(),
             stats.get("alive").get(), stats.get("dead").get());
@@ -482,7 +485,7 @@ public class Generator {
             ANSI_GREEN,
             totalGeneratedPopulation.get(),
             ANSI_RESET);
-    System.out.printf(
+    System.out.print(
             "Like what we're doing? Synthea is an open-source project, and your support helps us keep building.\n");
     System.out.printf("Please consider %s%s%s (%s).\n\n",
             ANSI_BLUE,
