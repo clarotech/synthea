@@ -322,8 +322,39 @@ public abstract class Exporter {
         writeNewFile(outFilePath, bundleJson);
       }
     }
+
+    /*
+      UK Core Export is here....
+     */
+    if (Config.getAsBoolean("exporter.fhir.export") && Config.getAsBoolean("exporter.fhir.use_uk_core")  ) {
+
+      File outDirectory = getOutputFolder("fhir-ukc", person);
+
+      org.hl7.fhir.r4.model.Bundle bundle = FhirR4Ukc.convertToFHIR(person, stopTime);
+
+      IParser parser = FhirR4Ukc.getContext().newJsonParser();
+      if (Config.getAsBoolean("exporter.fhir.bulk_data")) {
+        parser.setPrettyPrint(false);
+        for (org.hl7.fhir.r4.model.Bundle.BundleEntryComponent entry : bundle.getEntry()) {
+          String filename = entry.getResource().getResourceType().toString() + ".ndjson";
+          Path outFilePath = outDirectory.toPath().resolve(filename);
+          String entryJson = parser.encodeResourceToString(entry.getResource());
+          appendToFile(outFilePath, entryJson);
+        }
+      } else {
+        parser.setPrettyPrint(true);
+        String bundleJson = parser.encodeResourceToString(bundle);
+        Path outFilePath = outDirectory.toPath().resolve(filename(person, fileTag, "json"));
+        writeNewFile(outFilePath, bundleJson);
+      }
+      FhirGroupExporterR4.addPatient((String) person.attributes.get(Person.ID));
+    }
+
     if (Config.getAsBoolean("exporter.fhir.export")) {
+
       File outDirectory = getOutputFolder("fhir", person);
+      File outDirectoryUKC = getOutputFolder("fhir-ukc", person);
+
       org.hl7.fhir.r4.model.Bundle bundle = FhirR4.convertToFHIR(person, stopTime);
 
       if (options.flexporterMappings != null) {
@@ -358,6 +389,7 @@ public abstract class Exporter {
       }
       FhirGroupExporterR4.addPatient((String) person.attributes.get(Person.ID));
     }
+
     if (Config.getAsBoolean("exporter.ccda.export")) {
       String ccdaXml = CCDAExporter.export(person, stopTime);
       File outDirectory = getOutputFolder("ccda", person);
