@@ -470,6 +470,8 @@ public class Generator {
     }
     Exporter.runPostCompletionExports(this, exporterRuntimeOptions);
 
+    System.out.printf("ClaroTech - UK Variant for Synthea");
+
     System.out.printf("Records: total=%d, alive=%d, dead=%d\n", totalGeneratedPopulation.get(),
             stats.get("alive").get(), stats.get("dead").get());
     System.out.printf("RNG=%d\n", this.populationRandom.getCount());
