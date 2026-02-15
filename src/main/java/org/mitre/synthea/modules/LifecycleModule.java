@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 import org.mitre.synthea.engine.Module;
@@ -66,7 +67,7 @@ public final class LifecycleModule extends Module {
       Config.getAsDouble("generate.middle_names", 0.80);
 
   private static RandomCollection<String> sexualOrientationData = loadSexualOrientationData();
-
+  private static final Random random = new Random();
   /**
    * Constructor for LifecycleModule.
    */
@@ -169,6 +170,10 @@ public final class LifecycleModule extends Module {
       String phoneNumber = "555-" + ((person.randInt(999 - 100 + 1) + 100)) + "-"
           + ((person.randInt(9999 - 1000 + 1) + 1000));
       attributes.put(Person.TELECOM, phoneNumber);
+
+      // UKC - NHS Number allocation
+      String nhsNumber = generateTestNHSNumber();
+      attributes.put(Person.IDENTIFIER_NHS_NUMBER, phoneNumber);
 
       boolean hasStreetAddress2 = person.rand() < 0.5;
       attributes.put(Person.ADDRESS, Names.fakeAddress(hasStreetAddress2, person));
@@ -287,6 +292,69 @@ public final class LifecycleModule extends Module {
     }
   }
 
+
+  /**
+   * Generates a random NHS Number in the test range (9000000000-9999999999)
+   * with a valid Modulus 11 check digit.
+   *
+   * @return A valid 10-digit NHS Number as a String
+   */
+  public static String generateTestNHSNumber() {
+    while (true) {
+      // Generate first 9 digits, starting with 9
+      StringBuilder nhsNumber = new StringBuilder();
+      nhsNumber.append('9'); // Test range starts with 9
+
+      // Generate remaining 8 digits randomly
+      for (int i = 0; i < 8; i++) {
+        nhsNumber.append(random.nextInt(10));
+      }
+
+      // Calculate check digit
+      int checkDigit = calculateCheckDigit(nhsNumber.toString());
+
+      // If check digit is 10, the number is invalid - regenerate
+      if (checkDigit == 10) {
+        continue;
+      }
+
+      // Append check digit and return
+      nhsNumber.append(checkDigit);
+      return nhsNumber.toString();
+    }
+  }
+
+  /**
+   * Calculates the Modulus 11 check digit for the first 9 digits
+   * of an NHS Number.
+   *
+   * @param first9Digits The first 9 digits of the NHS Number
+   * @return The check digit (0-9, or 10 if invalid)
+   */
+  private static int calculateCheckDigit(String first9Digits) {
+    int sum = 0;
+
+    // Multiply each digit by its weight (11 down to 3)
+    for (int i = 0; i < 9; i++) {
+      int digit = Character.getNumericValue(first9Digits.charAt(i));
+      int weight = 11 - i;
+      sum += digit * weight;
+    }
+
+    // Calculate remainder
+    int remainder = sum % 11;
+
+    // Check digit is 11 minus remainder
+    int checkDigit = 11 - remainder;
+
+    // If check digit is 11, it becomes 0
+    if (checkDigit == 11) {
+      checkDigit = 0;
+    }
+
+    // Return check digit (10 indicates invalid number)
+    return checkDigit;
+  }
   /**
    * Age the patient.
    *

@@ -143,6 +143,11 @@ public class Person implements Serializable, RandomNumberGenerator, QuadTreeElem
   public static final String IDENTIFIER_SITE = "identifier_site";
   /** Represents the variant ID identifier of the person. */
   public static final String IDENTIFIER_VARIANT_ID = "identifier_variant_id";
+
+
+  /** Represents UK NHS Number for the person. */
+  public static final String IDENTIFIER_NHS_NUMBER= "identifier_nhs_number";
+
   /** Represents the seed ID identifier of the person. */
   public static final String IDENTIFIER_SEED_ID = "identifier_seed_id";
   /** Represents the family name of the emergency contact for the person. */
