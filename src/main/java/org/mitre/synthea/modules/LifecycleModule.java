@@ -173,7 +173,7 @@ public final class LifecycleModule extends Module {
 
       // UKC - NHS Number allocation.
       String nhsNumber = generateTestNHSNumber();
-      attributes.put(Person.IDENTIFIER_NHS_NUMBER, phoneNumber);
+      attributes.put(Person.IDENTIFIER_NHS_NUMBER, nhsNumber);
 
       boolean hasStreetAddress2 = person.rand() < 0.5;
       attributes.put(Person.ADDRESS, Names.fakeAddress(hasStreetAddress2, person));
