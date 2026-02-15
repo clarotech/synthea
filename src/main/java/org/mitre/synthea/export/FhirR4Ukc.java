@@ -493,10 +493,15 @@ public class FhirR4Ukc {
         patientResource.setMeta(meta);
 
         //  UKC - Add NHS number as an identifier
+        //  Add NHS Number Verification Extension - but always state matched.
+        //  TODO : Add some variability to this extension.
         if (person.attributes.get(Person.IDENTIFIER_NHS_NUMBER) != null) {
+
+            Extension nhsExtension = new Extension("https://fhir.hl7.org.uk/StructureDefinition/Extension-UKCore-NHSNumberVerificationStatus",new CodeableConcept(new Coding("https://fhir.hl7.org.uk/CodeSystem/UKCore-NHSNumberVerificationStatusEngland", "01", "Number present and verified")));
             patientResource.addIdentifier()
                     .setSystem("https://fhir.nhs.uk/Id/nhs-number")
-                    .setValue((String) person.attributes.get(Person.IDENTIFIER_NHS_NUMBER));
+                    .setValue((String) person.attributes.get(Person.IDENTIFIER_NHS_NUMBER))
+                    .addExtension(nhsExtension);
         }
 
         if (person.attributes.get(Person.ENTITY) != null) {
