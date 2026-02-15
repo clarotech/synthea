@@ -171,7 +171,7 @@ public final class LifecycleModule extends Module {
           + ((person.randInt(9999 - 1000 + 1) + 1000));
       attributes.put(Person.TELECOM, phoneNumber);
 
-      // UKC - NHS Number allocation
+      // UKC - NHS Number allocation.
       String nhsNumber = generateTestNHSNumber();
       attributes.put(Person.IDENTIFIER_NHS_NUMBER, phoneNumber);
 
