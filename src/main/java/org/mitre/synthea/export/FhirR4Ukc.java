@@ -485,43 +485,19 @@ public class FhirR4Ukc {
     private static BundleEntryComponent basicInfo(Person person, Bundle bundle, long stopTime) {
         Patient patientResource = new Patient();
 
-        patientResource.addIdentifier().setSystem(SYNTHEA_IDENTIFIER)
-                .setValue((String) person.attributes.get(Person.ID));
-
+//        patientResource.addIdentifier().setSystem(SYNTHEA_IDENTIFIER)
+//                .setValue((String) person.attributes.get(Person.ID));
 
         Meta meta = new Meta();
         meta.addProfile("https://fhir.hl7.org.uk/StructureDefinition/UKCore-Patient");
         patientResource.setMeta(meta);
 
-
-        Code mrnCode = new Code("http://terminology.hl7.org/CodeSystem/v2-0203", "MR", "Medical Record Number");
-        patientResource.addIdentifier()
-                .setType(mapCodeToCodeableConcept(mrnCode, "http://terminology.hl7.org/CodeSystem/v2-0203"))
-                .setSystem("http://hospital.smarthealthit.org")
-                .setValue((String) person.attributes.get(Person.ID));
-
-        Code ssnCode = new Code("http://terminology.hl7.org/CodeSystem/v2-0203", "SS", "Social Security Number");
-        patientResource.addIdentifier()
-                .setType(mapCodeToCodeableConcept(ssnCode, "http://terminology.hl7.org/CodeSystem/v2-0203"))
-                .setSystem("http://hl7.org/fhir/sid/us-ssn")
-                .setValue((String) person.attributes.get(Person.IDENTIFIER_SSN));
-
-        if (person.attributes.get(Person.IDENTIFIER_DRIVERS) != null) {
-            Code driversCode = new Code("http://terminology.hl7.org/CodeSystem/v2-0203", "DL", "Driver's license number");
+        //  UKC - Add NHS number as an identifier
+        if (person.attributes.get(Person.IDENTIFIER_NHS_NUMBER) != null) {
             patientResource.addIdentifier()
-                    .setType(mapCodeToCodeableConcept(driversCode, "http://terminology.hl7.org/CodeSystem/v2-0203"))
-                    .setSystem("urn:oid:2.16.840.1.113883.4.3.25")
-                    .setValue((String) person.attributes.get(Person.IDENTIFIER_DRIVERS));
+                    .setSystem("https://fhir.nhs.uk/Id/nhs-number")
+                    .setValue((String) person.attributes.get(Person.IDENTIFIER_NHS_NUMBER));
         }
-
-        if (person.attributes.get(Person.IDENTIFIER_PASSPORT) != null) {
-            Code passportCode = new Code("http://terminology.hl7.org/CodeSystem/v2-0203", "PPN", "Passport Number");
-            patientResource.addIdentifier()
-                    .setType(mapCodeToCodeableConcept(passportCode, "http://terminology.hl7.org/CodeSystem/v2-0203"))
-                    .setSystem(PASSPORT_URI)
-                    .setValue((String) person.attributes.get(Person.IDENTIFIER_PASSPORT));
-        }
-
 
         if (person.attributes.get(Person.ENTITY) != null) {
             Entity entity = (Entity) person.attributes.get(Person.ENTITY);
@@ -783,19 +759,19 @@ public class FhirR4Ukc {
 
         // DALY and QALY values
         // we only write the last(current) one to the patient record
-        Double dalyValue = (Double) person.attributes.get("most-recent-daly");
-        Double qalyValue = (Double) person.attributes.get("most-recent-qaly");
-        if (dalyValue != null) {
-            Extension dalyExtension = new Extension(SYNTHEA_EXT + "disability-adjusted-life-years");
-            DecimalType daly = new DecimalType(dalyValue);
-            dalyExtension.setValue(daly);
-            patientResource.addExtension(dalyExtension);
-
-            Extension qalyExtension = new Extension(SYNTHEA_EXT + "quality-adjusted-life-years");
-            DecimalType qaly = new DecimalType(qalyValue);
-            qalyExtension.setValue(qaly);
-            patientResource.addExtension(qalyExtension);
-        }
+//        Double dalyValue = (Double) person.attributes.get("most-recent-daly");
+//        Double qalyValue = (Double) person.attributes.get("most-recent-qaly");
+//        if (dalyValue != null) {
+//            Extension dalyExtension = new Extension(SYNTHEA_EXT + "disability-adjusted-life-years");
+//            DecimalType daly = new DecimalType(dalyValue);
+//            dalyExtension.setValue(daly);
+//            patientResource.addExtension(dalyExtension);
+//
+//            Extension qalyExtension = new Extension(SYNTHEA_EXT + "quality-adjusted-life-years");
+//            DecimalType qaly = new DecimalType(qalyValue);
+//            qalyExtension.setValue(qaly);
+//            patientResource.addExtension(qalyExtension);
+//        }
 
         return newEntry(bundle, patientResource, (String) person.attributes.get(Person.ID));
     }
