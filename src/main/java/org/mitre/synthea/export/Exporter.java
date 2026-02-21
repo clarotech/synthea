@@ -608,6 +608,12 @@ public abstract class Exporter {
     }
 
     try {
+      FhirPractitionerExporterR4Ukc.export(generator.getRandomizer(), generator.stop);
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+
+    try {
       HospitalExporterStu3.export(generator.stop);
     } catch (Exception e) {
       e.printStackTrace();

@@ -497,7 +497,7 @@ public class FhirR4Ukc {
         //  TODO : Add some variability to this extension.
         if (person.attributes.get(Person.IDENTIFIER_NHS_NUMBER) != null) {
 
-            Extension nhsExtension = new Extension("https://fhir.hl7.org.uk/StructureDefinition/Extension-UKCore-NHSNumberVerificationStatus",new CodeableConcept(new Coding("https://fhir.hl7.org.uk/CodeSystem/UKCore-NHSNumberVerificationStatusEngland", "01", "Number present and verified")));
+            Extension nhsExtension = new Extension("https://fhir.hl7.org.uk/StructureDefinition/Extension-UKCore-NHSNumberVerificationStatus",new CodeableConcept(new Coding("http://terminology.hl7.org/CodeSystem/v3-NullFlavor", "01", "Number present and verified")));
             patientResource.addIdentifier()
                     .setSystem("https://fhir.nhs.uk/Id/nhs-number")
                     .setValue((String) person.attributes.get(Person.IDENTIFIER_NHS_NUMBER))
@@ -3180,9 +3180,10 @@ public class FhirR4Ukc {
         if (USE_US_CORE_IG) {
             Meta meta = new Meta();
             meta.addProfile(
-                    "http://hl7.org/fhir/us/core/StructureDefinition/us-core-practitioner");
+                    "http://hl7.org/fhir/us/core/StructureDefinition/us-core-xxx");
             practitionerResource.setMeta(meta);
         }
+
         practitionerResource.addIdentifier()
                 .setSystem("http://hl7.org/fhir/sid/us-npi")
                 .setValue(clinician.npi);
@@ -3198,11 +3199,11 @@ public class FhirR4Ukc {
                 .setSystem(ContactPointSystem.EMAIL)
                 .setUse(ContactPointUse.WORK)
                 .setValue(email);
-        if (USE_US_CORE_IG) {
-            practitionerResource.getTelecomFirstRep().addExtension()
-                    .setUrl("http://hl7.org/fhir/us/core/StructureDefinition/us-core-direct")
-                    .setValue(new BooleanType(true));
-        }
+//        if (USE_US_CORE_IG) {
+//            practitionerResource.getTelecomFirstRep().addExtension()
+//                    .setUrl("http://hl7.org/fhir/us/core/StructureDefinition/us-core-direct")
+//                    .setValue(new BooleanType(true));
+//        }
         Address address = new Address()
                 .addLine((String) clinician.attributes.get(Clinician.ADDRESS))
                 .setCity((String) clinician.attributes.get(Clinician.CITY))
@@ -3213,11 +3214,11 @@ public class FhirR4Ukc {
         }
         practitionerResource.addAddress(address);
 
-        if (clinician.attributes.get(Person.GENDER).equals("M")) {
-            practitionerResource.setGender(AdministrativeGender.MALE);
-        } else if (clinician.attributes.get(Person.GENDER).equals("F")) {
-            practitionerResource.setGender(AdministrativeGender.FEMALE);
-        }
+//        if (clinician.attributes.get(Person.GENDER).equals("M")) {
+//            practitionerResource.setGender(AdministrativeGender.MALE);
+//        } else if (clinician.attributes.get(Person.GENDER).equals("F")) {
+//            practitionerResource.setGender(AdministrativeGender.FEMALE);
+//        }
         BundleEntryComponent practitionerEntry =
                 newEntry(bundle, practitionerResource, clinician.getResourceID());
 
