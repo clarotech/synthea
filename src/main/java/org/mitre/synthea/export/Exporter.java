@@ -390,12 +390,12 @@ public abstract class Exporter {
       FhirGroupExporterR4.addPatient((String) person.attributes.get(Person.ID));
     }
 
-    if (Config.getAsBoolean("exporter.ccda.export")) {
-      String ccdaXml = CCDAExporter.export(person, stopTime);
-      File outDirectory = getOutputFolder("ccda", person);
-      Path outFilePath = outDirectory.toPath().resolve(filename(person, fileTag, "xml"));
-      writeNewFile(outFilePath, ccdaXml);
-    }
+//    if (Config.getAsBoolean("exporter.ccda.export")) {
+//      String ccdaXml = CCDAExporter.export(person, stopTime);
+//      File outDirectory = getOutputFolder("ccda", person);
+//      Path outFilePath = outDirectory.toPath().resolve(filename(person, fileTag, "xml"));
+//      writeNewFile(outFilePath, ccdaXml);
+//    }
     if (Config.getAsBoolean("exporter.json.export")) {
       String json = JSONExporter.export(person);
       File outDirectory = getOutputFolder("json", person);
