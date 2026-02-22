@@ -70,14 +70,12 @@ dependencies {
   implementation 'com.jayway.jsonpath:json-path:2.7.0'
   implementation 'ca.uhn.hapi.fhir:hapi-fhir-base:6.1.0'
   implementation 'ca.uhn.hapi.fhir:hapi-fhir-structures-dstu3:6.1.0'
-  implementation 'ca.uhn.hapi.fhir:hapi-fhir-structures-dstu2:6.1.0'
   implementation 'ca.uhn.hapi.fhir:hapi-fhir-structures-r4:6.1.0'
   implementation 'ca.uhn.hapi.fhir:hapi-fhir-client:6.1.0'
 
   implementation 'ca.uhn.hapi.fhir:hapi-fhir-validation:6.1.0'
   implementation 'ca.uhn.hapi.fhir:hapi-fhir-validation-resources-r4:6.1.0'
   implementation 'ca.uhn.hapi.fhir:hapi-fhir-validation-resources-dstu3:6.1.0'
-  implementation 'ca.uhn.hapi.fhir:hapi-fhir-validation-resources-dstu2:6.1.0'
   // C-CDA export uses Apache FreeMarker templates
   implementation 'org.freemarker:freemarker:2.3.31'
 

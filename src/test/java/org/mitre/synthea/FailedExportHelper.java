@@ -55,7 +55,7 @@ public class FailedExportHelper {
 
   /**
    * Read failed export files.
-   * @param exporterName "CCDA", "FHIRR4", etc.
+   * @param exporterName "FHIRR4", etc.
    * @return List of Files, each containing the contents of a failed export file.
    * @throws IOException when bad things happen
    */

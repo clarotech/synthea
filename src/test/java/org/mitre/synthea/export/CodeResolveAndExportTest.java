@@ -10,9 +10,6 @@ import static org.mitre.synthea.TestHelper.isHttpRecordingEnabled;
 import static org.mitre.synthea.TestHelper.wiremockOptions;
 import static org.mitre.synthea.TestHelper.years;
 
-import ca.uhn.fhir.model.dstu2.composite.CodeableConceptDt;
-import ca.uhn.fhir.model.dstu2.composite.CodingDt;
-import ca.uhn.fhir.model.dstu2.resource.Bundle.Entry;
 import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
 
@@ -65,7 +62,6 @@ public class CodeResolveAndExportTest {
   private long time;
   private Path stu3OutputPath;
   private Path r4OutputPath;
-  private Path dstu2OutputPath;
 
   @Rule
   public WireMockRule mockTerminologyService = new WireMockRule(wiremockOptions()
@@ -82,10 +78,8 @@ public class CodeResolveAndExportTest {
     }
     RandomCodeGenerator.setBaseUrl(mockTerminologyService.baseUrl() + "/fhir");
     TestHelper.exportOff();
-    Config.set("exporter.ccda.export", "true");
     Config.set("exporter.fhir.export", "true");
     Config.set("exporter.fhir_stu3.export", "true");
-    Config.set("exporter.fhir_dstu2.export", "true");
     Config.set("generate.terminology_service_url", mockTerminologyService.baseUrl() + "/fhir");
 
     person = new Person(12345L);
@@ -123,8 +117,6 @@ public class CodeResolveAndExportTest {
     stu3OutputPath = stu3OutputDirectory.toPath().resolve(Exporter.filename(person, "", "json"));
     File r4OutputDirectory = Exporter.getOutputFolder("fhir", person);
     r4OutputPath = r4OutputDirectory.toPath().resolve(Exporter.filename(person, "", "json"));
-    File dstu2OutputDirectory = Exporter.getOutputFolder("fhir_dstu2", person);
-    dstu2OutputPath = dstu2OutputDirectory.toPath().resolve(Exporter.filename(person, "", "json"));
   }
 
   @Test
@@ -149,7 +141,6 @@ public class CodeResolveAndExportTest {
 
     verifyEncounterCodeStu3();
     verifyEncounterCodeR4();
-    verifyEncounterCodeDstu2();
   }
 
   private void verifyEncounterCodeStu3() throws IOException {
@@ -265,63 +256,6 @@ public class CodeResolveAndExportTest {
     inputStream.close();
   }
 
-  private void verifyEncounterCodeDstu2() throws IOException {
-    InputStream inputStream = new FileInputStream(dstu2OutputPath.toFile().getAbsolutePath());
-    ca.uhn.fhir.model.dstu2.resource.Bundle bundle =
-        (ca.uhn.fhir.model.dstu2.resource.Bundle) FhirDstu2.getContext().newJsonParser()
-            .parseResource(inputStream);
-
-    // Find encounter reason code.
-    Optional<Entry> maybeEncounterEntry = bundle.getEntry().stream()
-        .filter(entry -> entry.getResource().getResourceName().equals(
-            org.hl7.fhir.dstu2.model.ResourceType.Encounter.name()))
-        .findFirst();
-    assertTrue(maybeEncounterEntry.isPresent());
-
-    ca.uhn.fhir.model.dstu2.resource.Encounter encounterResource =
-        (ca.uhn.fhir.model.dstu2.resource.Encounter) maybeEncounterEntry.get().getResource();
-    assertEquals(encounterResource.getReason().size(), 1);
-    CodeableConceptDt encounterReason = encounterResource.getReason().get(0);
-    assertEquals(encounterReason.getCoding().size(), 1);
-    CodingDt reasonCoding = encounterReason.getCoding().get(0);
-
-    // Check encounter reason code.
-    assertEquals(SNOMED_URI, reasonCoding.getSystem());
-    assertEquals(EXPECTED_REASON_CODE, reasonCoding.getCode());
-    assertEquals(EXPECTED_REASON_DISPLAY, reasonCoding.getDisplay());
-
-    Optional<Entry> maybeObservationEntry = bundle.getEntry().stream()
-        .filter(entry -> entry.getResource().getResourceName().equals(
-            org.hl7.fhir.dstu2.model.ResourceType.Observation.name()))
-        .findFirst();
-    assertTrue(maybeObservationEntry.isPresent());
-
-    // Find observation type code.
-    ca.uhn.fhir.model.dstu2.resource.Observation observationResource =
-        (ca.uhn.fhir.model.dstu2.resource.Observation) maybeObservationEntry.get().getResource();
-    CodeableConceptDt observationType = observationResource.getCode();
-    assertNotNull(observationType);
-    assertEquals(observationType.getCoding().size(), 1);
-    CodingDt observationTypeCoding = observationType.getCoding().get(0);
-
-    // Check observation type code.
-    assertEquals(LOINC_URI, observationTypeCoding.getSystem());
-    assertEquals(OBSERVATION_CODE, observationTypeCoding.getCode());
-    assertEquals(OBSERVATION_DISPLAY, observationTypeCoding.getDisplay());
-
-    // Find observation value code.
-    CodeableConceptDt observationValue = (CodeableConceptDt) observationResource.getValue();
-    assertNotNull(observationValue);
-    assertEquals(observationValue.getCoding().size(), 1);
-    CodingDt observationValueCoding = observationValue.getCoding().get(0);
-
-    // Check observation value code.
-    assertEquals(LOINC_URI, observationValueCoding.getSystem());
-    assertEquals(EXPECTED_VALUE_CODE, observationValueCoding.getCode());
-    assertEquals(EXPECTED_VALUE_DISPLAY, observationValueCoding.getDisplay());
-    inputStream.close();
-  }
-
   /**
    * Clean up after each test.
    */
@@ -332,7 +266,7 @@ public class CodeResolveAndExportTest {
     }
 
     List<Path> pathsToDelete =
-        Arrays.asList(stu3OutputPath, r4OutputPath, dstu2OutputPath);
+        Arrays.asList(stu3OutputPath, r4OutputPath);
     for (Path outputPath : pathsToDelete) {
       File outputFile = outputPath.toFile();
       boolean delete = outputFile.delete();
