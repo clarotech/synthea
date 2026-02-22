@@ -58,7 +58,6 @@ public abstract class Exporter {
    * Supported FHIR versions.
    */
   public enum SupportedFhirVersion {
-    DSTU2,
     STU3,
     R4
   }
@@ -305,23 +304,7 @@ public abstract class Exporter {
         writeNewFile(outFilePath, bundleJson);
       }
     }
-    if (Config.getAsBoolean("exporter.fhir_dstu2.export")) {
-      File outDirectory = getOutputFolder("fhir_dstu2", person);
-      if (Config.getAsBoolean("exporter.fhir.bulk_data")) {
-        ca.uhn.fhir.model.dstu2.resource.Bundle bundle = FhirDstu2.convertToFHIR(person, stopTime);
-        IParser parser = FhirDstu2.getContext().newJsonParser().setPrettyPrint(false);
-        for (ca.uhn.fhir.model.dstu2.resource.Bundle.Entry entry : bundle.getEntry()) {
-          String filename = entry.getResource().getResourceName() + ".ndjson";
-          Path outFilePath = outDirectory.toPath().resolve(filename);
-          String entryJson = parser.encodeResourceToString(entry.getResource());
-          appendToFile(outFilePath, entryJson);
-        }
-      } else {
-        String bundleJson = FhirDstu2.convertToFHIRJson(person, stopTime);
-        Path outFilePath = outDirectory.toPath().resolve(filename(person, fileTag, "json"));
-        writeNewFile(outFilePath, bundleJson);
-      }
-    }
+
 
     /*
       UK Core Export is here....
@@ -476,9 +459,6 @@ public abstract class Exporter {
     if (options.isQueueEnabled()) {
       try {
         switch (options.queuedFhirVersion()) {
-          case DSTU2:
-            options.recordQueue.put(FhirDstu2.convertToFHIRJson(person, stopTime));
-            break;
           case STU3:
             options.recordQueue.put(FhirStu3.convertToFHIRJson(person, stopTime));
             break;
@@ -621,18 +601,6 @@ public abstract class Exporter {
 
     try {
       FhirPractitionerExporterStu3.export(generator.stop);
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-
-    try {
-      HospitalExporterDstu2.export(generator.stop);
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-
-    try {
-      FhirPractitionerExporterDstu2.export(generator.stop);
     } catch (Exception e) {
       e.printStackTrace();
     }

@@ -134,6 +134,8 @@ public class Provider implements QuadTreeElement, Serializable {
   public String id;
   /** National Provider Identifier (NPI). */
   public String npi;
+  /** NHS ODS Code */
+  public String NhsOdsCode;
   /** CMS provider number. */
   public String cmsProviderNum;
   /** CMS PIN. */
@@ -835,6 +837,8 @@ public class Provider implements QuadTreeElement, Serializable {
     d.cmsCategory = line.remove("category");
     d.cmsProviderType = line.remove("provider_type_code");
     d.cmsProviderNum = line.remove("provider_num");
+    // UKC - Handle ODS Codes
+    d.NhsOdsCode = line.remove("provider_num"); // Just temporary for now
     d.cmsPin = line.remove("pin");
     if (d.cmsPin != null && d.cmsPin.length() > 14) {
       d.cmsPin = null; // the pin is too long and is probably garbage

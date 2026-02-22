@@ -13,9 +13,8 @@ Currently, Synthea<sup>TM</sup> features include:
 - Primary Care Encounters, Emergency Room Encounters, and Symptom-Driven Encounters
 - Conditions, Allergies, Medications, Vaccinations, Observations/Vitals, Labs, Procedures, CarePlans
 - Formats
-  - HL7 FHIR (R4, STU3 v3.0.1, and DSTU2 v1.0.2)
+  - HL7 FHIR (R4, STU3 v3.0.1)
   - Bulk FHIR in ndjson format (set `exporter.fhir.bulk_data = true` to activate)
-  - C-CDA (set `exporter.ccda.export = true` to activate)
   - CSV (set `exporter.csv.export = true` to activate)
   - CPCDS (set `exporter.cpcds.export = true` to activate)
 - Rendering Rules and Disease Modules with Graphviz
@@ -40,7 +39,7 @@ cd synthea
 
 
 The default properties file values can be found at `src/main/resources/synthea.properties`.
-By default, synthea does not generate CCDA, CPCDA, CSV, or Bulk FHIR (ndjson). You'll need to
+By default, synthea does not generate CPCDA, CSV, or Bulk FHIR (ndjson). You'll need to
 adjust this file to activate these features.  See the [wiki](https://github.com/synthetichealth/synthea/wiki)
 for more details, or use our [guided customizer tool](https://synthetichealth.github.io/spt/#/customizer).
 

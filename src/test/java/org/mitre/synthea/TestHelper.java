@@ -109,10 +109,8 @@ public abstract class TestHelper {
     Config.set("exporter.split_records", "false");
     Config.set("exporter.split_records.duplicate_data", "false");
     Config.set("exporter.metadata.export", "false");
-    Config.set("exporter.ccda.export", "false");
     Config.set("exporter.fhir.export", "false");
     Config.set("exporter.fhir_stu3.export", "false");
-    Config.set("exporter.fhir_dstu2.export", "false");
     Config.set("exporter.fhir.transaction_bundle", "false");
     Config.set("exporter.fhir.bulk_data", "false");
     Config.set("exporter.fhir.included_resources", "");
@@ -120,10 +118,8 @@ public abstract class TestHelper {
     Config.set("exporter.groups.fhir.export", "false");
     Config.set("exporter.hospital.fhir.export", "false");
     Config.set("exporter.hospital.fhir_stu3.export", "false");
-    Config.set("exporter.hospital.fhir_dstu2.export", "false");
     Config.set("exporter.practitioner.fhir.export", "false");
     Config.set("exporter.practitioner.fhir_stu3.export", "false");
-    Config.set("exporter.practitioner.fhir_dstu2.export", "false");
     Config.set("exporter.json.export", "false");
     Config.set("exporter.csv.export", "false");
     Config.set("exporter.cpcds.export", "false");
