@@ -26,11 +26,6 @@ import java.util.Optional;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathExpressionException;
 
-import org.hl7.fhir.dstu3.model.Bundle;
-import org.hl7.fhir.dstu3.model.Bundle.BundleEntryComponent;
-import org.hl7.fhir.dstu3.model.CodeableConcept;
-import org.hl7.fhir.dstu3.model.Coding;
-import org.hl7.fhir.dstu3.model.ResourceType;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -60,7 +55,6 @@ public class CodeResolveAndExportTest {
   private static final String EXPECTED_VALUE_DISPLAY = "Trade or service area";
   private Person person;
   private long time;
-  private Path stu3OutputPath;
   private Path r4OutputPath;
 
   @Rule
@@ -79,7 +73,6 @@ public class CodeResolveAndExportTest {
     RandomCodeGenerator.setBaseUrl(mockTerminologyService.baseUrl() + "/fhir");
     TestHelper.exportOff();
     Config.set("exporter.fhir.export", "true");
-    Config.set("exporter.fhir_stu3.export", "true");
     Config.set("generate.terminology_service_url", mockTerminologyService.baseUrl() + "/fhir");
 
     person = new Person(12345L);
@@ -113,8 +106,6 @@ public class CodeResolveAndExportTest {
     PayerManager.clear();
     PayerManager.loadNoInsurance();
 
-    File stu3OutputDirectory = Exporter.getOutputFolder("fhir_stu3", person);
-    stu3OutputPath = stu3OutputDirectory.toPath().resolve(Exporter.filename(person, "", "json"));
     File r4OutputDirectory = Exporter.getOutputFolder("fhir", person);
     r4OutputPath = r4OutputDirectory.toPath().resolve(Exporter.filename(person, "", "json"));
   }
@@ -138,63 +129,9 @@ public class CodeResolveAndExportTest {
     encounter.addObservation(time, observationType.code, observationValue, observationDisplay);
 
     Exporter.export(person, time);
-
-    verifyEncounterCodeStu3();
     verifyEncounterCodeR4();
   }
 
-  private void verifyEncounterCodeStu3() throws IOException {
-    InputStream inputStream = new FileInputStream(stu3OutputPath.toFile().getAbsolutePath());
-    Bundle bundle = (Bundle) FhirStu3.getContext().newJsonParser().parseResource(inputStream);
-
-    // Find encounter reason code.
-    Optional<BundleEntryComponent> maybeEncounterEntry = bundle.getEntry().stream()
-        .filter(entry -> entry.getResource().getResourceType().equals(ResourceType.Encounter))
-        .findFirst();
-    assertTrue(maybeEncounterEntry.isPresent());
-
-    org.hl7.fhir.dstu3.model.Encounter encounterResource =
-        (org.hl7.fhir.dstu3.model.Encounter) maybeEncounterEntry.get().getResource();
-    assertEquals(encounterResource.getReason().size(), 1);
-    CodeableConcept encounterReason = encounterResource.getReason().get(0);
-    assertEquals(encounterReason.getCoding().size(), 1);
-    Coding reasonCoding = encounterReason.getCoding().get(0);
-
-    // Check encounter reason code.
-    assertEquals(SNOMED_URI, reasonCoding.getSystem());
-    assertEquals(EXPECTED_REASON_CODE, reasonCoding.getCode());
-    assertEquals(EXPECTED_REASON_DISPLAY, reasonCoding.getDisplay());
-
-    Optional<BundleEntryComponent> maybeObservationEntry = bundle.getEntry().stream()
-        .filter(entry -> entry.getResource().getResourceType().equals(ResourceType.Observation))
-        .findFirst();
-    assertTrue(maybeObservationEntry.isPresent());
-
-    // Find observation type code.
-    org.hl7.fhir.dstu3.model.Observation observationResource =
-        (org.hl7.fhir.dstu3.model.Observation) maybeObservationEntry.get().getResource();
-    CodeableConcept observationType = observationResource.getCode();
-    assertNotNull(observationType);
-    assertEquals(observationType.getCoding().size(), 1);
-    Coding observationTypeCoding = observationType.getCoding().get(0);
-
-    // Check observation type code.
-    assertEquals(LOINC_URI, observationTypeCoding.getSystem());
-    assertEquals(OBSERVATION_CODE, observationTypeCoding.getCode());
-    assertEquals(OBSERVATION_DISPLAY, observationTypeCoding.getDisplay());
-
-    // Find observation value code.
-    CodeableConcept observationValue = observationResource.getValueCodeableConcept();
-    assertNotNull(observationValue);
-    assertEquals(observationValue.getCoding().size(), 1);
-    Coding observationValueCoding = observationValue.getCoding().get(0);
-
-    // Check observation value code.
-    assertEquals(LOINC_URI, observationValueCoding.getSystem());
-    assertEquals(EXPECTED_VALUE_CODE, observationValueCoding.getCode());
-    assertEquals(EXPECTED_VALUE_DISPLAY, observationValueCoding.getDisplay());
-    inputStream.close();
-  }
 
   private void verifyEncounterCodeR4() throws IOException {
     InputStream inputStream = new FileInputStream(r4OutputPath.toFile().getAbsolutePath());
@@ -266,7 +203,7 @@ public class CodeResolveAndExportTest {
     }
 
     List<Path> pathsToDelete =
-        Arrays.asList(stu3OutputPath, r4OutputPath);
+        Arrays.asList( r4OutputPath);
     for (Path outputPath : pathsToDelete) {
       File outputFile = outputPath.toFile();
       boolean delete = outputFile.delete();
