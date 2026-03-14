@@ -470,83 +470,23 @@ public class FhirR4Ukc {
             patientResource.addContact(contact);
         }
 
-        if (USE_US_CORE_IG) {
-            // We do not yet account for mixed race
-            Extension raceExtension = new Extension(
-                    "http://hl7.org/fhir/us/core/StructureDefinition/us-core-race");
-            String race = (String) person.attributes.get(Person.RACE);
+        Extension UkEthnicityExtension = new Extension(
+                "https://fhir.hl7.org.uk/StructureDefinition/Extension-UKCore-EthnicCategory");
+        String UkEthnicity = (String) person.attributes.get(Person.UK_ETHNICITY);
+        Coding UkEthnicityCoding = new Coding();
+        UkEthnicityCoding.setSystem("https://fhir.hl7.org.uk/CodeSystem/UKCore-EthnicCategoryEngland");
+        UkEthnicityCoding.setCode(UkEthnicity);
+        UkEthnicityCoding.setDisplay(ukEthnicityDisplay(UkEthnicity));
+        UkEthnicityExtension.setValue(new CodeableConcept(UkEthnicityCoding));
+        patientResource.addExtension(UkEthnicityExtension);
 
-            String raceDisplay;
-            switch (race) {
-                case "white":
-                    raceDisplay = "White";
-                    break;
-                case "black":
-                    raceDisplay = "Black or African American";
-                    break;
-                case "asian":
-                    raceDisplay = "Asian";
-                    break;
-                case "native":
-                    raceDisplay = "American Indian or Alaska Native";
-                    break;
-                case "hawaiian":
-                    raceDisplay = "Native Hawaiian or Other Pacific Islander";
-                    break;
-                default:
-                    raceDisplay = "Other";
-                    break;
-            }
-
-            String raceNum = (String) raceEthnicityCodes.get(race);
-
-            Extension raceCodingExtension = new Extension("ombCategory");
-            Coding raceCoding = new Coding();
-            if (raceDisplay.equals("Other")) {
-                raceCoding.setSystem("http://terminology.hl7.org/CodeSystem/v3-NullFlavor");
-                raceCoding.setCode("UNK");
-                raceCoding.setDisplay("Unknown");
-            } else {
-                raceCoding.setSystem("urn:oid:2.16.840.1.113883.6.238");
-                raceCoding.setCode(raceNum);
-                raceCoding.setDisplay(raceDisplay);
-            }
-            raceCodingExtension.setValue(raceCoding);
-            raceExtension.addExtension(raceCodingExtension);
-
-            Extension raceTextExtension = new Extension("text");
-            raceTextExtension.setValue(new StringType(raceDisplay));
-            raceExtension.addExtension(raceTextExtension);
-            patientResource.addExtension(raceExtension);
-
-            // We do not yet account for mixed ethnicity
-            Extension ethnicityExtension = new Extension(
-                    "http://hl7.org/fhir/us/core/StructureDefinition/us-core-ethnicity");
-            String ethnicity = (String) person.attributes.get(Person.ETHNICITY);
-
-            String ethnicityDisplay;
-            if (ethnicity.equals("hispanic")) {
-                ethnicity = "hispanic";
-                ethnicityDisplay = "Hispanic or Latino";
-            } else {
-                ethnicity = "nonhispanic";
-                ethnicityDisplay = "Not Hispanic or Latino";
-            }
-
-            String ethnicityNum = (String) raceEthnicityCodes.get(ethnicity);
-
-            Extension ethnicityCodingExtension = new Extension("ombCategory");
-            Coding ethnicityCoding = new Coding();
-            ethnicityCoding.setSystem("urn:oid:2.16.840.1.113883.6.238");
-            ethnicityCoding.setCode(ethnicityNum);
-            ethnicityCoding.setDisplay(ethnicityDisplay);
-            ethnicityCodingExtension.setValue(ethnicityCoding);
-
-            ethnicityExtension.addExtension(ethnicityCodingExtension);
-            Extension ethnicityTextExtension = new Extension("text");
-            ethnicityTextExtension.setValue(new StringType(ethnicityDisplay));
-            ethnicityExtension.addExtension(ethnicityTextExtension);
-            patientResource.addExtension(ethnicityExtension);
+        // Set UK Donor Extension
+        if (person.attributes.get(Person.UK_DONOR) != null) {
+            Extension UkDonorExtension = new Extension(
+                    "http://hl7.org/fhir/StructureDefinition/patient-cadavericDonor");
+            Boolean UkDonorValue = (Boolean) person.attributes.get(Person.UK_DONOR);
+            UkDonorExtension.setValue(new BooleanType(UkDonorValue));
+            patientResource.addExtension(UkDonorExtension);
         }
 
         String firstLanguage = (String) person.attributes.get(Person.FIRST_LANGUAGE);
@@ -588,11 +528,11 @@ public class FhirR4Ukc {
             }
         }
 
-        Extension mothersMaidenNameExtension = new Extension(
-                "http://hl7.org/fhir/StructureDefinition/patient-mothersMaidenName");
-        String mothersMaidenName = (String) person.attributes.get(Person.NAME_MOTHER);
-        mothersMaidenNameExtension.setValue(new StringType(mothersMaidenName));
-        patientResource.addExtension(mothersMaidenNameExtension);
+//        Extension mothersMaidenNameExtension = new Extension(
+//                "http://hl7.org/fhir/StructureDefinition/patient-mothersMaidenName");
+//        String mothersMaidenName = (String) person.attributes.get(Person.NAME_MOTHER);
+//        mothersMaidenNameExtension.setValue(new StringType(mothersMaidenName));
+//        patientResource.addExtension(mothersMaidenNameExtension);
 
         long birthdate = (long) person.attributes.get(Person.BIRTHDATE);
         patientResource.setBirthDate(new Date(birthdate));
@@ -680,14 +620,6 @@ public class FhirR4Ukc {
                             "http://terminology.hl7.org/CodeSystem/v3-MaritalStatus"));
         }
 
-        Point2D.Double coord = person.getLonLat();
-        if (coord != null) {
-            Extension geolocation = addrResource.addExtension();
-            geolocation.setUrl("http://hl7.org/fhir/StructureDefinition/geolocation");
-            geolocation.addExtension("latitude", new DecimalType(coord.getY()));
-            geolocation.addExtension("longitude", new DecimalType(coord.getX()));
-        }
-
         if (!person.alive(stopTime)) {
             patientResource.setDeceased(
                     convertFhirDateTime((Long) person.attributes.get(Person.DEATHDATE), true));
@@ -701,22 +633,6 @@ public class FhirR4Ukc {
 
         patientResource.setText(new Narrative().setStatus(NarrativeStatus.GENERATED)
                 .setDiv(new XhtmlNode(NodeType.Element).setValue(generatedBySynthea)));
-
-        // DALY and QALY values
-        // we only write the last(current) one to the patient record
-//        Double dalyValue = (Double) person.attributes.get("most-recent-daly");
-//        Double qalyValue = (Double) person.attributes.get("most-recent-qaly");
-//        if (dalyValue != null) {
-//            Extension dalyExtension = new Extension(SYNTHEA_EXT + "disability-adjusted-life-years");
-//            DecimalType daly = new DecimalType(dalyValue);
-//            dalyExtension.setValue(daly);
-//            patientResource.addExtension(dalyExtension);
-//
-//            Extension qalyExtension = new Extension(SYNTHEA_EXT + "quality-adjusted-life-years");
-//            DecimalType qaly = new DecimalType(qalyValue);
-//            qalyExtension.setValue(qaly);
-//            patientResource.addExtension(qalyExtension);
-//        }
 
         return newEntry(bundle, patientResource, (String) person.attributes.get(Person.ID));
     }
@@ -3344,6 +3260,39 @@ public class FhirR4Ukc {
      * @param code   Code to find
      * @return entry for the matching Condition, or null if none is found
      */
+    /**
+     * Returns the display string for a UK census ethnicity code.
+     *
+     * @param code The UK census ethnicity code (e.g. "A", "B", "99").
+     * @return The corresponding display string.
+     */
+    private static String ukEthnicityDisplay(String code) {
+        if (code == null) {
+            return "Not known";
+        }
+        switch (code) {
+            case "A":  return "White - British";
+            case "B":  return "White - Irish";
+            case "C":  return "White - Any other White background";
+            case "D":  return "Mixed - White and Black Caribbean";
+            case "E":  return "Mixed - White and Black African";
+            case "F":  return "Mixed - White and Asian";
+            case "G":  return "Mixed - Any other mixed background";
+            case "H":  return "Asian or Asian British - Indian";
+            case "J":  return "Asian or Asian British - Pakistani";
+            case "K":  return "Asian or Asian British - Bangladeshi";
+            case "L":  return "Asian or Asian British - Any other Asian background";
+            case "M":  return "Black or Black British - Caribbean";
+            case "N":  return "Black or Black British - African";
+            case "P":  return "Black or Black British - Any other Black background";
+            case "R":  return "Other Ethnic Groups - Chinese";
+            case "S":  return "Other Ethnic Groups - Any other ethnic group";
+            case "Z":  return "Not stated";
+            case "99": return "Not known";
+            default:   return code;
+        }
+    }
+
     private static BundleEntryComponent findConditionResourceByCode(Bundle bundle, String code) {
         for (BundleEntryComponent entry : bundle.getEntry()) {
             if (entry.getResource().fhirType().equals("Condition")) {
