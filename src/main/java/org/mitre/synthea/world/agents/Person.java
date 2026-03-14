@@ -71,6 +71,10 @@ public class Person implements Serializable, RandomNumberGenerator, QuadTreeElem
   public static final String RACE = "race";
   /** Represents the ethnicity of the person. */
   public static final String ETHNICITY = "ethnicity";
+  /** Represents the UK census ethnicity code of the person. */
+  public static final String UK_ETHNICITY = "uk_ethnicity";
+  /** Represents the UK organ donor registration status of the person. */
+  public static final String UK_DONOR = "uk_donor";
   /** Represents the first language of the person. */
   public static final String FIRST_LANGUAGE = "first_language";
   /** Represents the gender of the person. */

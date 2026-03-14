@@ -955,8 +955,67 @@ public class Generator {
     long birthdate = birthdateFromTargetAge(targetAge, random);
     demographicsOutput.put(Person.BIRTHDATE, birthdate);
 
+    // Generate the person's UK census ethnicity code.
+    String ukEthnicity = pickUKEthnicity(random);
+    demographicsOutput.put(Person.UK_ETHNICITY, ukEthnicity);
+
+    // Generate the person's UK organ donor registration status.
+    // 45% TRUE, 10% FALSE, 45% NULL (not registered / unknown).
+    double donorRand = random.rand();
+    Boolean ukDonor;
+    if (donorRand < 0.45) {
+      ukDonor = Boolean.TRUE;
+    } else if (donorRand < 0.55) {
+      ukDonor = Boolean.FALSE;
+    } else {
+      ukDonor = null;
+    }
+    demographicsOutput.put(Person.UK_DONOR, ukDonor);
+
     // Return the generated demographics.
     return demographicsOutput;
+  }
+
+  /**
+   * Randomly picks a UK census 2001 ethnicity code based on England &amp; Wales population
+   * distribution.
+   *
+   * @param random The random number generator to use.
+   * @return a single-letter (or two-digit) ethnicity code string.
+   */
+  private String pickUKEthnicity(RandomNumberGenerator random) {
+    // Codes and cumulative upper-bounds derived from 2021 Census (England & Wales).
+    // Z (Not stated) and 99 (Not known) each assigned ~1.5% of the remainder.
+    double[] thresholds = {
+      0.744,  // A  - White British
+      0.753,  // B  - White Irish
+      0.815,  // C  - White Other
+      0.824,  // D  - Mixed White/Black Caribbean
+      0.828,  // E  - Mixed White/Black African
+      0.836,  // F  - Mixed White/Asian
+      0.844,  // G  - Mixed Other
+      0.875,  // H  - Asian Indian
+      0.902,  // J  - Asian Pakistani
+      0.913,  // K  - Asian Bangladeshi
+      0.929,  // L  - Asian Other
+      0.939,  // M  - Black Caribbean
+      0.964,  // N  - Black African
+      0.969,  // P  - Black Other
+      0.976,  // R  - Chinese
+      0.992,  // S  - Any Other Ethnic Group
+      0.996,  // Z  - Not stated
+      1.000   // 99 - Not known
+    };
+    String[] codes = {"A", "B", "C", "D", "E", "F", "G", "H", "J", "K", "L",
+        "M", "N", "P", "R", "S", "Z", "99"};
+
+    double rand = random.rand();
+    for (int i = 0; i < thresholds.length; i++) {
+      if (rand < thresholds[i]) {
+        return codes[i];
+      }
+    }
+    return codes[codes.length - 1];
   }
 
   /**
