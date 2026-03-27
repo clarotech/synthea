@@ -376,16 +376,6 @@ public class FhirR4Ukc {
                 clinicalNote(person, personEntry, bundle, encounterEntry, clinicalNoteText, lastNote);
             }
 
-//            if (shouldExport(org.hl7.fhir.r4.model.Claim.class)) {
-//                // one claim per encounter
-//                BundleEntryComponent encounterClaim =
-//                        encounterClaim(person, personEntry, bundle, encounterEntry, encounter);
-//
-//                if (shouldExport(ExplanationOfBenefit.class)) {
-//                    explanationOfBenefit(personEntry, bundle, encounterEntry, person,
-//                            encounterClaim, encounter, encounter.claim);
-//                }
-//            }
         }
 
         if (USE_US_CORE_IG && shouldExport(Provenance.class)) {
