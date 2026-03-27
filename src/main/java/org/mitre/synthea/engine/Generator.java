@@ -960,17 +960,13 @@ public class Generator {
     demographicsOutput.put(Person.UK_ETHNICITY, ukEthnicity);
 
     // Generate the person's UK organ donor registration status.
-    // 45% TRUE, 10% FALSE, 45% NULL (not registered / unknown).
+    // 45% TRUE, 10% FALSE, 45% not set (not registered / unknown).
     double donorRand = random.rand();
-    Boolean ukDonor;
     if (donorRand < 0.45) {
-      ukDonor = Boolean.TRUE;
+      demographicsOutput.put(Person.UK_DONOR, Boolean.TRUE);
     } else if (donorRand < 0.55) {
-      ukDonor = Boolean.FALSE;
-    } else {
-      ukDonor = null;
+      demographicsOutput.put(Person.UK_DONOR, Boolean.FALSE);
     }
-    demographicsOutput.put(Person.UK_DONOR, ukDonor);
 
     // Return the generated demographics.
     return demographicsOutput;
