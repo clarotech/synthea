@@ -8,12 +8,12 @@ setlocal EnableDelayedExpansion
 
 IF "%~1" == "" (
   @rem Just run Synthea with no args
-  gradlew.bat run
-  
+  "%~dp0gradlew.bat" run
+
 ) ELSE (
   @rem Running Synthea with arguments
   @rem For simplicity, do nothing and just pass the args to gradle
-  SET syntheaArgs= 
+  SET syntheaArgs=
 
   :loop
   ECHO ARG = %1
@@ -24,5 +24,5 @@ IF "%~1" == "" (
 
   :run
   ECHO syntheaArgs = !syntheaArgs!
-  gradlew.bat run -Params="[!syntheaArgs!]"
+  "%~dp0gradlew.bat" run -Params="[!syntheaArgs!]"
 )
