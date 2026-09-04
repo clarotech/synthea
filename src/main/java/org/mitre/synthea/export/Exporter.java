@@ -307,6 +307,25 @@ public abstract class Exporter {
 
 
     /*
+      UK Core IPS Export is here....
+     */
+    if (Config.getAsBoolean("exporter.fhir.export") && Config.getAsBoolean("exporter.fhir.use_uk_ips")) {
+
+      File outDirectory = getOutputFolder("fhir-uk-ips", person);
+
+      org.hl7.fhir.r4.model.Bundle bundle = FhirR4UkIps.convertToFHIRIps(person, stopTime);
+
+      IParser parser = FhirR4Ukc.getContext().newJsonParser();
+
+      parser.setPrettyPrint(true);
+      String bundleJson = parser.encodeResourceToString(bundle);
+      Path outFilePath = outDirectory.toPath().resolve(filename(person, fileTag, "json"));
+      writeNewFile(outFilePath, bundleJson);
+
+      FhirGroupExporterR4.addPatient((String) person.attributes.get(Person.ID));
+    }
+
+    /*
       UK Core Export is here....
      */
     if (Config.getAsBoolean("exporter.fhir.export") && Config.getAsBoolean("exporter.fhir.use_uk_core")  ) {
@@ -316,20 +335,12 @@ public abstract class Exporter {
       org.hl7.fhir.r4.model.Bundle bundle = FhirR4Ukc.convertToFHIR(person, stopTime);
 
       IParser parser = FhirR4Ukc.getContext().newJsonParser();
-      if (Config.getAsBoolean("exporter.fhir.bulk_data")) {
-        parser.setPrettyPrint(false);
-        for (org.hl7.fhir.r4.model.Bundle.BundleEntryComponent entry : bundle.getEntry()) {
-          String filename = entry.getResource().getResourceType().toString() + ".ndjson";
-          Path outFilePath = outDirectory.toPath().resolve(filename);
-          String entryJson = parser.encodeResourceToString(entry.getResource());
-          appendToFile(outFilePath, entryJson);
-        }
-      } else {
-        parser.setPrettyPrint(true);
-        String bundleJson = parser.encodeResourceToString(bundle);
-        Path outFilePath = outDirectory.toPath().resolve(filename(person, fileTag, "json"));
-        writeNewFile(outFilePath, bundleJson);
-      }
+
+      parser.setPrettyPrint(true);
+      String bundleJson = parser.encodeResourceToString(bundle);
+      Path outFilePath = outDirectory.toPath().resolve(filename(person, fileTag, "json"));
+      writeNewFile(outFilePath, bundleJson);
+
       FhirGroupExporterR4.addPatient((String) person.attributes.get(Person.ID));
     }
 
