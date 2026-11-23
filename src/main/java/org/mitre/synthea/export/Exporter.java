@@ -286,25 +286,6 @@ public abstract class Exporter {
       valueSetCodeResolver.resolve();
     }
 
-    /*
-      UK Core IPS Export is here....
-     */
-    if (Config.getAsBoolean("exporter.fhir.export") && Config.getAsBoolean("exporter.fhir.use_uk_ips")) {
-
-      File outDirectory = getOutputFolder("fhir-uk-ips", person);
-
-      org.hl7.fhir.r4.model.Bundle bundle = FhirR4UkIps.convertToFHIRIps(person, stopTime);
-
-      IParser parser = FhirR4Ukc.getContext().newJsonParser();
-
-      parser.setPrettyPrint(true);
-      String bundleJson = parser.encodeResourceToString(bundle);
-      Path outFilePath = outDirectory.toPath().resolve(filename(person, fileTag, "json"));
-      writeNewFile(outFilePath, bundleJson);
-
-      FhirGroupExporterR4.addPatient((String) person.attributes.get(Person.ID));
-    }
-
     if (Config.getAsBoolean("exporter.fhir.use_openehr")  ) {
 
       File outDirectory = getOutputFolder("fhir-openehr", person);
