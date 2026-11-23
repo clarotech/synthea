@@ -36,8 +36,6 @@ import org.mitre.synthea.export.flexporter.Actions;
 import org.mitre.synthea.export.flexporter.FhirPathUtils;
 import org.mitre.synthea.export.flexporter.FlexporterJavascriptContext;
 import org.mitre.synthea.export.flexporter.Mapping;
-import org.mitre.synthea.export.rif.BB2RIFExporter;
-import org.mitre.synthea.export.rif.CodeMapper;
 import org.mitre.synthea.helpers.Config;
 import org.mitre.synthea.helpers.TransitionMetrics;
 import org.mitre.synthea.helpers.Utilities;
@@ -360,32 +358,11 @@ public abstract class Exporter {
       FhirGroupExporterR4.addPatient((String) person.attributes.get(Person.ID));
     }
 
-//    if (Config.getAsBoolean("exporter.ccda.export")) {
-//      String ccdaXml = CCDAExporter.export(person, stopTime);
-//      File outDirectory = getOutputFolder("ccda", person);
-//      Path outFilePath = outDirectory.toPath().resolve(filename(person, fileTag, "xml"));
-//      writeNewFile(outFilePath, ccdaXml);
-//    }
     if (Config.getAsBoolean("exporter.json.export")) {
       String json = JSONExporter.export(person);
       File outDirectory = getOutputFolder("json", person);
       Path outFilePath = outDirectory.toPath().resolve(filename(person, fileTag, "json"));
       writeNewFile(outFilePath, json);
-    }
-    if (Config.getAsBoolean("exporter.bfd.export")) {
-      try {
-        BB2RIFExporter exporter = BB2RIFExporter.getInstance();
-        wasExported = exporter.export(person, stopTime, options.yearsOfHistory);
-      } catch (IOException e) {
-        e.printStackTrace();
-      }
-    }
-    if (Config.getAsBoolean("exporter.cpcds.export")) {
-      try {
-        CPCDSExporter.getInstance().export(person, stopTime);
-      } catch (IOException e) {
-        e.printStackTrace();
-      }
     }
     if (Config.getAsBoolean("exporter.text.export")) {
       try {
@@ -411,13 +388,6 @@ public abstract class Exporter {
     if (Config.getAsBoolean("exporter.symptoms.text.export")) {
       try {
         SymptomTextExporter.exportAll(person, fileTag, stopTime);
-      } catch (IOException e) {
-        e.printStackTrace();
-      }
-    }
-    if (Config.getAsBoolean("exporter.cdw.export")) {
-      try {
-        CDWExporter.getInstance().export(person, stopTime);
       } catch (IOException e) {
         e.printStackTrace();
       }
@@ -564,22 +534,6 @@ public abstract class Exporter {
       FhirPractitionerExporterR4Ukc.export(generator.getRandomizer(), generator.stop);
     } catch (Exception e) {
       e.printStackTrace();
-    }
-
-    if (Config.getAsBoolean("exporter.bfd.export")) {
-      try {
-        BB2RIFExporter exporter = BB2RIFExporter.getInstance();
-        exporter.exportNPIs();
-        exporter.exportManifest();
-        exporter.exportEndState();
-        exporter.exportMissingCodes();
-      } catch (IOException e) {
-        e.printStackTrace();
-      }
-    }
-
-    if (Config.getAsBoolean("exporter.cdw.export")) {
-      CDWExporter.getInstance().writeFactTables();
     }
 
     if (Config.getAsBoolean("exporter.metadata.export", false)) {

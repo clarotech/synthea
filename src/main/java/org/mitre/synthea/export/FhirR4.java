@@ -139,7 +139,6 @@ import org.hl7.fhir.utilities.xhtml.XhtmlNode;
 
 import org.mitre.synthea.engine.Components;
 import org.mitre.synthea.engine.Components.Attachment;
-import org.mitre.synthea.export.rif.CodeMapper;
 import org.mitre.synthea.helpers.Config;
 import org.mitre.synthea.helpers.RandomNumberGenerator;
 import org.mitre.synthea.helpers.SimpleCSV;

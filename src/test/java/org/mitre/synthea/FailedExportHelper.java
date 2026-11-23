@@ -28,7 +28,7 @@ public class FailedExportHelper {
   /**
    * Dump as much info as possible on the failed export case. This will try to write out the actual
    * failing export, the validation errors and a JSON file containing the Person.
-   * @param exporterName "CDA", "FHIRR4", etc.
+   * @param exporterName "FHIRR4", etc.
    * @param attemptedExport The actual exported document, if it exists
    * @param validatonErrors Any validation errors
    * @param person the person

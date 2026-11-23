@@ -74,7 +74,7 @@ dependencies {
 
   implementation 'ca.uhn.hapi.fhir:hapi-fhir-validation:6.1.0'
   implementation 'ca.uhn.hapi.fhir:hapi-fhir-validation-resources-r4:6.1.0'
-  // C-CDA export uses Apache FreeMarker templates
+  // Clinical note export uses Apache FreeMarker templates
   implementation 'org.freemarker:freemarker:2.3.31'
 
   // google guava for some data structures
@@ -183,8 +183,6 @@ task graphviz(type: JavaExec) {
 }
 
 tasks.javadoc {
-    // Exclude the rif package
-    exclude 'org/mitre/synthea/export/rif/**'
     // Exclude ClinicianSpecialty which is mostly just a big list of constants
     exclude 'org/mitre/synthea/world/concepts/ClinicianSpecialty.java'
     // Exclude the exporters, which are mostly missing comments on enums of straightforward values
@@ -193,33 +191,6 @@ tasks.javadoc {
     exclude '/org/mitre/synthea/world/concepts/VitalSign.java'
     // Exclude some agent classes, which have large quantities of constants that don't need documentation
     exclude '/org/mitre/synthea/world/agents/PayerManager.java'
-}
-
-task rifMinimize(type: JavaExec) {
-  group = 'Application'
-  description = 'Filter exported RIF files to produce minimal set that covers all claim types'
-  classpath sourceSets.main.runtimeClasspath
-  mainClass = "org.mitre.synthea.export.rif.tools.BB2RIFMinimizer"
-}
-
-task rif2CCW(type: JavaExec) {
-  group = 'Application'
-  description = 'Convert exported RIF files from BB2 format to CCW format'
-  classpath sourceSets.main.runtimeClasspath
-  mainClass = "org.mitre.synthea.export.rif.tools.BB2RIF2CCW"
-}
-
-if (project.hasProperty("args")) {
-    ext.cmdLineArgs = project.getProperty("args")
-} else {
-    ext.cmdLineArgs = ""
-}
-task rifBeneSplit(type: JavaExec) {
-  group = 'Application'
-  description = 'Split original 3  RIF file bene export into one file per year'
-  classpath sourceSets.main.runtimeClasspath
-  mainClass = "org.mitre.synthea.export.rif.tools.BB2RIFBeneSplitter"
-  args cmdLineArgs.split()
 }
 
 shadowJar {

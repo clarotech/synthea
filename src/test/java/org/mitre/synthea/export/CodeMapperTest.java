@@ -1,4 +1,4 @@
-package org.mitre.synthea.export.rif;
+package org.mitre.synthea.export;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -24,7 +24,7 @@ public class CodeMapperTest {
 
   @Test
   public void testUnweightedCodeMapper() {
-    Config.set("exporter.bfd.require_code_maps", "true");
+    Config.set("exporter.require_code_maps", "true");
     CodeMapper mapper = new CodeMapper("export/unweighted_code_map.json");
     assertTrue(mapper.canMap("10509002"));
     assertEquals("ABC20.9", mapper.map("10509002", random));
@@ -34,7 +34,7 @@ public class CodeMapperTest {
 
   @Test
   public void testWeightedCodeMapper() {
-    Config.set("exporter.bfd.require_code_maps", "true");
+    Config.set("exporter.require_code_maps", "true");
     CodeMapper mapper = new CodeMapper("export/weighted_code_map.json");
     assertTrue(mapper.canMap("10509002"));
     int abcCount = 0;
@@ -52,7 +52,7 @@ public class CodeMapperTest {
 
   @Test
   public void testCodeMapperMerge() {
-    Config.set("exporter.bfd.require_code_maps", "true");
+    Config.set("exporter.require_code_maps", "true");
     CodeMapper mapper = new CodeMapper("export/unweighted_code_map.json");
     mapper.merge(new CodeMapper("export/weighted_code_map.json"));
     assertTrue(mapper.canMap("10509002"));
@@ -71,19 +71,19 @@ public class CodeMapperTest {
 
   @Test(expected = MissingResourceException.class)
   public void testThrowsExceptionWhenMapFileMissing() {
-    Config.set("exporter.bfd.require_code_maps", "true");
+    Config.set("exporter.require_code_maps", "true");
     CodeMapper mapper = new CodeMapper("export/missing_code_map.json");
   }
 
   @Test
   public void testDoesntThrowsExceptionWhenSuppressed() {
-    Config.set("exporter.bfd.require_code_maps", "false");
+    Config.set("exporter.require_code_maps", "false");
     CodeMapper mapper = new CodeMapper("export/missing_code_map.json");
   }
 
   @Test
   public void testMissingCodeCount() {
-    Config.set("exporter.bfd.require_code_maps", "true");
+    Config.set("exporter.require_code_maps", "true");
     CodeMapper mapper = new CodeMapper("export/weighted_code_map.json");
     assertTrue(mapper.canMap("10509002"));
     assertFalse(mapper.canMap("abc"));

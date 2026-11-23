@@ -15,7 +15,6 @@ Currently, Synthea<sup>TM</sup> features include:
 - Formats
   - HL7 FHIR (R4)
   - Bulk FHIR in ndjson format (set `exporter.fhir.bulk_data = true` to activate)
-  - CPCDS (set `exporter.cpcds.export = true` to activate)
 - Rendering Rules and Disease Modules with Graphviz
 
 ## Developer Quick Start
@@ -38,7 +37,7 @@ cd synthea
 
 
 The default properties file values can be found at `src/main/resources/synthea.properties`.
-By default, synthea does not generate CPCDS or Bulk FHIR (ndjson). You'll need to
+By default, synthea does not generate Bulk FHIR (ndjson). You'll need to
 adjust this file to activate these features.  See the [wiki](https://github.com/synthetichealth/synthea/wiki)
 for more details, or use our [guided customizer tool](https://synthetichealth.github.io/spt/#/customizer).
 
@@ -92,7 +91,7 @@ run_synthea --exporter.baseDirectory="./output_tx/" Texas
 
 Some settings can be changed in `./src/main/resources/synthea.properties`.
 
-Synthea<sup>TM</sup> will output patient records in C-CDA and FHIR formats in `./output`.
+Synthea<sup>TM</sup> will output patient records in FHIR format in `./output`.
 
 ### Synthea<sup>TM</sup> GraphViz
 Generate graphical visualizations of Synthea<sup>TM</sup> rules and modules.

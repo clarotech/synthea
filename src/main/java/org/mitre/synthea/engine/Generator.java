@@ -27,7 +27,6 @@ import java.util.stream.Collectors;
 import org.apache.commons.io.IOCase;
 import org.apache.commons.io.filefilter.WildcardFileFilter;
 import org.mitre.synthea.editors.GrowthDataErrorsEditor;
-import org.mitre.synthea.export.CDWExporter;
 import org.mitre.synthea.export.Exporter;
 import org.mitre.synthea.helpers.Config;
 import org.mitre.synthea.helpers.DefaultRandomNumberGenerator;
@@ -271,10 +270,6 @@ public class Generator {
   private void init() {
     if (options.state == null) {
       options.state = DEFAULT_STATE;
-    }
-    int stateIndex = Location.getIndex(options.state);
-    if (Config.getAsBoolean("exporter.cdw.export")) {
-      CDWExporter.getInstance().setKeyStart((stateIndex * 1_000_000) + 1);
     }
     Exporter.loadCustomExporters();
     Exporter.loadCodeMappers();

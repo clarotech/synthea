@@ -1,4 +1,4 @@
-package org.mitre.synthea.export.rif;
+package org.mitre.synthea.export;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
@@ -41,7 +41,7 @@ public class CodeMapper {
    * {
    *   "synthea_code": [ # each synthea code will be mapped to one of the codes in this array
    *     {
-   *       "code": "BFD_code",
+   *       "code": "mapped_code",
    *       "description": "Description of code", # optional
    *       "weight": "floating point value", # weighting used when selecting a code randomly
    *       "other field": "value of other field" # optional additional fields
@@ -51,7 +51,7 @@ public class CodeMapper {
    * </pre>
    */
   public CodeMapper(String jsonMapResource) {
-    requireCodeMaps = Config.getAsBoolean("exporter.bfd.require_code_maps", true);
+    requireCodeMaps = Config.getAsBoolean("exporter.require_code_maps", true);
     missingCodes = new ConcurrentHashMap<>();
     mapName = FilenameUtils.getBaseName(jsonMapResource);
     try {
@@ -64,9 +64,9 @@ public class CodeMapper {
 
       // use the deserialized JSON code map to populate the weighted code map
       map = new HashMap<String, RandomCollection<Map<String, String>>>();
-      jsonMap.forEach((syntheaCode, bfdCodeList) -> {
+      jsonMap.forEach((syntheaCode, codeList) -> {
         RandomCollection<Map<String, String>> collection = new RandomCollection<>();
-        bfdCodeList.forEach((codeEntry) -> {
+        codeList.forEach((codeEntry) -> {
           Double weight = 1.0;
           if (codeEntry.containsKey(WEIGHT_KEY)) {
             weight = Double.parseDouble(codeEntry.get(WEIGHT_KEY));
@@ -82,7 +82,7 @@ public class CodeMapper {
                 "CodeMapper", jsonMapResource);
       } else {
         // For testing, the mapping writer is not present.
-        System.out.println("BB2Exporter is running without " + jsonMapResource);
+        System.out.println("Running without code map " + jsonMapResource);
       }
     }
   }
@@ -110,7 +110,7 @@ public class CodeMapper {
   /**
    * Determines whether this mapper has an entry for the supplied code.
    * @param codeToMap the Synthea code to look for
-   * @return true if the Synthea code can be mapped to BFD, false if not
+   * @return true if the Synthea code can be mapped, false if not
    */
   public boolean canMap(String codeToMap) {
     return canMap(codeToMap, true);
@@ -119,7 +119,7 @@ public class CodeMapper {
   /**
    * Determines whether this mapper has an entry for the supplied code.
    * @param codeToMap the Synthea code to look for
-   * @return true if the Synthea code can be mapped to BFD, false if not
+   * @return true if the Synthea code can be mapped, false if not
    */
   public boolean canMap(Code codeToMap) {
     boolean mappable = canMap(codeToMap.code, false);
@@ -139,7 +139,7 @@ public class CodeMapper {
    * Determines whether this mapper has an entry for the supplied code.
    * @param codeToMap the Synthea code to look for
    * @param logMissing whether to log missing codes or not
-   * @return true if the Synthea code can be mapped to BFD, false if not
+   * @return true if the Synthea code can be mapped, false if not
    */
   private boolean canMap(String codeToMap, boolean logMissing) {
     if (map == null) {
@@ -168,88 +168,88 @@ public class CodeMapper {
   }
 
   /**
-   * Get one of the BFD codes for the supplied Synthea code. Equivalent to
+   * Get one of the mapped codes for the supplied Synthea code. Equivalent to
    * {@code map(codeToMap, "code", rand)}.
    * @param codeToMap the Synthea code to look for
-   * @param rand a source of random numbers used to pick one of the list of BFD codes
-   * @return the BFD code or null if the code can't be mapped
+   * @param rand a source of random numbers used to pick one of the list of mapped codes
+   * @return the mapped code or null if the code can't be mapped
    */
   public String map(String codeToMap, RandomNumberGenerator rand) {
     return map(codeToMap, "code", rand);
   }
 
   /**
-   * Get one of the BFD codes for the supplied Synthea code. Equivalent to
+   * Get one of the mapped codes for the supplied Synthea code. Equivalent to
    * {@code map(codeToMap, "code", rand)}.
    * @param codeToMap the Synthea code to look for
-   * @param rand a source of random numbers used to pick one of the list of BFD codes
-   * @return the BFD code or null if the code can't be mapped
+   * @param rand a source of random numbers used to pick one of the list of mapped codes
+   * @return the mapped code or null if the code can't be mapped
    */
   public String map(Code codeToMap, RandomNumberGenerator rand) {
     return map(codeToMap, "code", rand);
   }
 
   /**
-   * Get one of the BFD codes for the supplied Synthea code. Equivalent to
+   * Get one of the mapped codes for the supplied Synthea code. Equivalent to
    * {@code map(codeToMap, "code", rand)}.
    * @param codeToMap the Synthea code to look for
-   * @param rand a source of random numbers used to pick one of the list of BFD codes
+   * @param rand a source of random numbers used to pick one of the list of mapped codes
    * @param stripDots whether to remove dots in codes (e.g. J39.45 becomes J3945)
-   * @return the BFD code or null if the code can't be mapped
+   * @return the mapped code or null if the code can't be mapped
    */
   public String map(String codeToMap, RandomNumberGenerator rand, boolean stripDots) {
     return map(codeToMap, "code", rand, stripDots);
   }
 
   /**
-   * Get one of the BFD codes for the supplied Synthea code. Equivalent to
+   * Get one of the mapped codes for the supplied Synthea code. Equivalent to
    * {@code map(codeToMap, "code", rand)}.
    * @param codeToMap the Synthea code to look for
-   * @param rand a source of random numbers used to pick one of the list of BFD codes
+   * @param rand a source of random numbers used to pick one of the list of mapped codes
    * @param stripDots whether to remove dots in codes (e.g. J39.45 becomes J3945)
-   * @return the BFD code or null if the code can't be mapped
+   * @return the mapped code or null if the code can't be mapped
    */
   public String map(Code codeToMap, RandomNumberGenerator rand, boolean stripDots) {
     return map(codeToMap, "code", rand, stripDots);
   }
 
   /**
-   * Get one of the BFD codes for the supplied Synthea code.
+   * Get one of the mapped codes for the supplied Synthea code.
    * @param codeToMap the Synthea code to look for
-   * @param bfdCodeType the type of BFD code to map to
-   * @param rand a source of random numbers used to pick one of the list of BFD codes
-   * @return the BFD code or null if the code can't be mapped
+   * @param codeType the type of mapped code to map to
+   * @param rand a source of random numbers used to pick one of the list of mapped codes
+   * @return the mapped code or null if the code can't be mapped
    */
-  public String map(String codeToMap, String bfdCodeType, RandomNumberGenerator rand) {
-    return map(codeToMap, bfdCodeType, rand, false);
+  public String map(String codeToMap, String codeType, RandomNumberGenerator rand) {
+    return map(codeToMap, codeType, rand, false);
   }
 
   /**
-   * Get one of the BFD codes for the supplied Synthea code.
+   * Get one of the mapped codes for the supplied Synthea code.
    * @param codeToMap the Synthea code to look for
-   * @param bfdCodeType the type of BFD code to map to
-   * @param rand a source of random numbers used to pick one of the list of BFD codes
-   * @return the BFD code or null if the code can't be mapped
+   * @param codeType the type of mapped code to map to
+   * @param rand a source of random numbers used to pick one of the list of mapped codes
+   * @return the mapped code or null if the code can't be mapped
    */
-  public String map(Code codeToMap, String bfdCodeType, RandomNumberGenerator rand) {
-    return map(codeToMap, bfdCodeType, rand, false);
+  public String map(Code codeToMap, String codeType, RandomNumberGenerator rand) {
+    return map(codeToMap, codeType, rand, false);
   }
 
   /**
-   * Get one of the BFD codes for the supplied Synthea code.
+   * Get one of the mapped codes for the supplied Synthea code.
    * @param codeToMap the Synthea code to look for
-   * @param bfdCodeType the type of BFD code to map to
-   * @param rand a source of random numbers used to pick one of the list of BFD codes
+   * @param codeType the type of mapped code to map to
+   * @param rand a source of random numbers used to pick one of the list of mapped codes
    * @param stripDots whether to remove dots in codes (e.g. J39.45 becomes J3945)
-   * @return the BFD code or null if the code can't be mapped
+   * @return the mapped code or null if the code can't be mapped
    */
-  public String map(String codeToMap, String bfdCodeType, RandomNumberGenerator rand,
+  public String map(String codeToMap, String codeType, RandomNumberGenerator rand,
           boolean stripDots) {
     if (!canMap(codeToMap)) {
       return null;
     }
     RandomCollection<Map<String, String>> options = map.get(codeToMap);
-    String code = options.next(rand).get(bfdCodeType);
+    String code = options.next(rand).get(codeType);
     if (stripDots) {
       return code.replaceAll("\\.", "");
     } else {
@@ -258,24 +258,24 @@ public class CodeMapper {
   }
 
   /**
-   * Get one of the BFD codes for the supplied Synthea code.
+   * Get one of the mapped codes for the supplied Synthea code.
    * @param codeToMap the Synthea code to look for
-   * @param bfdCodeType the type of BFD code to map to
-   * @param rand a source of random numbers used to pick one of the list of BFD codes
+   * @param codeType the type of mapped code to map to
+   * @param rand a source of random numbers used to pick one of the list of mapped codes
    * @param stripDots whether to remove dots in codes (e.g. J39.45 becomes J3945)
-   * @return the BFD code or null if the code can't be mapped
+   * @return the mapped code or null if the code can't be mapped
    */
-  public String map(Code codeToMap, String bfdCodeType, RandomNumberGenerator rand,
+  public String map(Code codeToMap, String codeType, RandomNumberGenerator rand,
           boolean stripDots) {
-    return map(codeToMap.code, bfdCodeType, rand, stripDots);
+    return map(codeToMap.code, codeType, rand, stripDots);
   }
 
   /**
-   * Get one of the BFD codes for the supplied Synthea code. Equivalent to
+   * Get one of the mapped codes for the supplied Synthea code. Equivalent to
    * {@code map(codeToMap, "code", rand)}.
    * @param codeToMap the Synthea code to look for
-   * @param rand a source of random numbers used to pick one of the list of BFD codes
-   * @return the BFD code and display string or null if the code can't be mapped
+   * @param rand a source of random numbers used to pick one of the list of mapped codes
+   * @return the mapped code and display string or null if the code can't be mapped
    */
   public SimpleEntry<String, String> mapToCodeAndDescription(Code codeToMap,
           RandomNumberGenerator rand) {
