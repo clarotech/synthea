@@ -184,14 +184,11 @@ public final class EncounterModule extends Module {
     if (code != null) {
       encounter.codes.add(code);
     }
-    // assign a provider organization
-    Provider prov = null;
-    if (specialty.equalsIgnoreCase(ClinicianSpecialty.CARDIOLOGY)) {
-      // Get the first provider in the list that was loaded
-      prov = Provider.getProviderList().get(0);
-    } else {
-      prov = person.getProvider(type, time);
-    }
+    // assign a provider organization: the person's preferred (nearest) provider for this
+    // encounter type, for every specialty. Cardiology used to take the first provider loaded,
+    // which is effectively arbitrary (e.g. a distant GP practice handling an emergency).
+    // If that provider has no clinicians of the specialty, chooseClinicianList falls back to GP.
+    Provider prov = person.getProvider(type, time);
     prov.incrementEncounters(type, year);
     encounter.provider = prov;
     // assign a clinician

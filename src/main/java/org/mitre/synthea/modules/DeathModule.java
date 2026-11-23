@@ -15,26 +15,37 @@ import org.mitre.synthea.world.concepts.HealthRecord.Observation;
 import org.mitre.synthea.world.concepts.HealthRecord.Report;
 
 /**
- * Module representing the death of a person.
+ * Module representing the death of a person, certified using the Medical
+ * Certificate of Cause of Death (MCCD) for England and Wales, as revised by the
+ * Medical Certificate of Cause of Death Regulations 2024 (in force since
+ * 9 September 2024).
+ *
+ * <p>Synthea records a single cause of death per person, so it is entered on
+ * MCCD line I(a). With no lower Part I lines, it is also the underlying cause of
+ * death.
  */
 public class DeathModule {
   /**
-   * Code representing the death certification process.
+   * SNOMED CT code for the death certification procedure.
    */
   public static final Code DEATH_CERTIFICATION = new Code("SNOMED-CT", "308646001",
-      "Death Certification");
+      "Death certification");
 
   /**
-   * Code representing the cause of death on the U.S. Standard Certificate of Death.
+   * SNOMED CT code for the cause of death, as recorded on the MCCD. This is the
+   * Observation code. The value is the SNOMED CT concept for the condition,
+   * e.g. 22298006 |Myocardial infarction (disorder)|.
    */
-  public static final Code CAUSE_OF_DEATH_CODE = new Code("LOINC", "69453-9",
-      "Cause of Death [US Standard Certificate of Death]");
+  public static final Code CAUSE_OF_DEATH_CODE = new Code("SNOMED-CT", "184305005",
+      "Cause of death");
 
   /**
-   * Code representing the U.S. Standard Certificate of Death (2003 revision).
+   * SNOMED CT code for the death certificate (record artifact). In England and
+   * Wales this is the MCCD: the attending practitioner's certificate or the
+   * medical examiner's certificate.
    */
-  public static final Code DEATH_CERTIFICATE = new Code("LOINC", "69409-1",
-      "U.S. standard certificate of death - 2003 revision");
+  public static final Code DEATH_CERTIFICATE = new Code("SNOMED-CT", "307930005",
+      "Death certificate");
   // NOTE: if new codes are added, be sure to update getAllCodes below
 
   /**
@@ -53,10 +64,12 @@ public class DeathModule {
           ClinicianSpecialty.GENERAL_PRACTICE, DEATH_CERTIFICATION, "DeathModule");
       encounter.reason = causeOfDeath;
 
+      // MCCD Part I, line I(a): disease or condition directly leading to death.
       Observation codObs = person.record.observation(time, CAUSE_OF_DEATH_CODE.code, causeOfDeath);
       codObs.codes.add(CAUSE_OF_DEATH_CODE);
       codObs.category = "exam";
 
+      // The MCCD, grouping the cause-of-death observation above.
       Report deathCert = person.record.report(time, DEATH_CERTIFICATE.code, 1);
       deathCert.codes.add(DEATH_CERTIFICATE);
 

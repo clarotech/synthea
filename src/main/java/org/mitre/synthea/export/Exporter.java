@@ -325,6 +325,21 @@ public abstract class Exporter {
       FhirGroupExporterR4.addPatient((String) person.attributes.get(Person.ID));
     }
 
+    if (Config.getAsBoolean("exporter.fhir.use_openehr")  ) {
+
+      File outDirectory = getOutputFolder("fhir-openehr", person);
+
+      org.hl7.fhir.r4.model.Bundle bundle = FhirR4Ukc.convertToFHIR(person, stopTime);
+
+      IParser parser = FhirR4Ukc.getContext().newJsonParser();
+
+      parser.setPrettyPrint(true);
+      String bundleJson = parser.encodeResourceToString(bundle);
+      Path outFilePath = outDirectory.toPath().resolve(filename(person, fileTag, "json"));
+      writeNewFile(outFilePath, bundleJson);
+
+      FhirGroupExporterR4.addPatient((String) person.attributes.get(Person.ID));
+    }
     /*
       UK Core Export is here....
      */

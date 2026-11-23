@@ -205,7 +205,7 @@ public class FhirR4UkIps {
 
   @SuppressWarnings("rawtypes")
   private static Map loadLanguageLookup() {
-    String filename = "language_lookup.json";
+    String filename = "uk_language_lookup.json";
     try {
       String json = Utilities.readResource(filename);
       Gson g = new Gson();

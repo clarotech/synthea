@@ -1,0 +1,142 @@
+{
+  "arabic": [
+    "Riyadh,Riyadh,SA",
+    "Najran,Najran,SA",
+    "Al-Mubarraz,Eastern Province,SA",
+    "Khamis Mushayt,Asir,SA",
+    "Jeddah,Tihamah,SA"
+  ],
+  "spanish": [
+    "Mexico City,Mexico City,MX",
+    "Bogota,Bogota,CO",
+    "Buenos Aires,Ciudad de Buenos Aires,AR",
+    "Lima,Lima Province,PE",
+    "Santiago,Santiago Province,CL"
+  ],
+  "american": [
+    "New York,New York,US",
+    "Los Angeles,California,US",
+    "Chicago,Illinois,US",
+    "Houston,Texas,US",
+    "Phoenix,Arizona,US"
+  ],
+  "canadian": [
+    "Toronto,Ontario,CA",
+    "Montreal,Quebec,CA",
+    "Vancouver,British Columbia,CA",
+    "Calgary,Alberta,CA",
+    "Ottawa,Ontario,CA"
+  ],
+  "chinese": [
+    "Hong Kong,Hong Kong Special Administrative Region,CN",
+    "Macau,Macao Special Administrative Region of the People's Republic of China,CN",
+    "Beijing,Beijing Municipality,CN",
+    "Chongqing,Chongqing Municipality,CN",
+    "Shanghai,Shanghai Municipality,CN"
+  ],
+  "french": [
+    "Paris,Ile-de-France,FR",
+    "Marseille,Provence-Alpes-Cote d'Azur,FR",
+    "Lyon,Auvergne-Rhone-Alpes,FR",
+    "Toulouse,Occitanie,FR",
+    "Nice,Provence-Alpes-Cote d'Azur,FR"
+  ],
+  "german": [
+    "Berlin,Berlin,DE",
+    "Hamburg,Hamburg,DE",
+    "Munich,Bavaria,DE",
+    "Cologne,North Rhine-Westphalia,DE",
+    "Frankfurt,Hesse,DE"
+  ],
+  "greek": [
+    "Athens,Athens Prefecture,GR",
+    "Thessaloniki,Thessaloniki Prefecture,GR",
+    "Patras,Achaea,GR",
+    "Heraklion,Heraklion Prefecture,GR",
+    "Larissa,Larissa Prefecture,GR"
+  ],
+  "hindi": [
+    "Mumbai,Maharashtra,IN",
+    "Delhi,Delhi,IN",
+    "Bangalore,Karnataka,IN",
+    "Hyderabad,Telangana,IN",
+    "Ahmedabad,Gujarat,IN"
+  ],
+  "italian": [
+    "Rome,Lazio,IT",
+    "Milan,Lombardy,IT",
+    "Naples,Campania,IT",
+    "Turin,Piedmont,IT",
+    "Palermo,Sicily,IT"
+  ],
+  "portuguese": [
+    "Lisbon,Estremadura,PT",
+    "Funchal,Madeira,PT",
+    "Braga,Minho,PT",
+    "Faro,Algarve,PT",
+    "Porto,Douro Litoral,PT",
+    "Sao Paulo,Sao Paulo,BR",
+    "Rio de Janeiro,Rio de Janeiro,BR",
+    "Salvador,Bahia,BR",
+    "Brasilia,Federal District,BR"
+  ],
+  "russian": [
+    "Moscow,Moscow,RU",
+    "St Petersburg,St Petersburg,RU",
+    "Novosibirsk,Novosibirsk Oblast,RU",
+    "Yekaterinburg,Sverdlovsk Oblast,RU",
+    "Nizhny Novgorod,Nizhny Novgorod Oblast,RU"
+  ],
+  "polish": [
+    "Warsaw,Masovian,PL",
+    "Kraków,Lesser Poland,PL",
+    "Łódź,Łódź,PL",
+    "Wrocław,Lower Silesian,PL"
+  ],
+  "japanese": [
+    "Tokyo,Tokyo,JP",
+    "Yokohama,Kanagawa,JP",
+    "Osaka,Osaka,JP",
+    "Nagoya,Aichi,JP"
+  ],
+  "korean": [
+    "Seoul,Seoul,KR",
+    "Busan,Busan,KR",
+    "Incheon,Incheon,KR",
+    "Daegu,Daegu,KR"
+  ],
+  "vietnamese": [
+    "Ho Chi Minh City,Gia Định,VN",
+    "Hanoi,Hà Đông,VN",
+    "Haiphong,Kiến An,VN",
+    "Cantho,Cần Thơ,VN"
+  ],
+  "dutch": [
+    "Amsterdam,North Holland,NL",
+    "Rotterdam,South Holland,NL",
+    "The Hague,South Holland,NL",
+    "Utrecht,Utrecht,NL",
+    "Eindhoven,North Brabant,NL"
+  ],
+  "norwegian": [
+    "Oslo,Oslo,NO",
+    "Bergen,Vestland,NO",
+    "Trondheim,Trøndelag,NO",
+    "Stavanger,Rogaland,NO",
+    "Tromsø,Troms,NO"
+  ],
+  "swedish": [
+    "Stockholm,Stockholm County,SE",
+    "Gothenburg,Västra Götaland,SE",
+    "Malmö,Skåne,SE",
+    "Uppsala,Uppsala County,SE",
+    "Linköping,Östergötland,SE"
+  ],
+  "danish": [
+    "Copenhagen,Capital Region,DK",
+    "Aarhus,Central Denmark,DK",
+    "Odense,Southern Denmark,DK",
+    "Aalborg,North Denmark,DK",
+    "Esbjerg,Southern Denmark,DK"
+  ]
+}

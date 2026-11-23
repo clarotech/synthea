@@ -165,7 +165,7 @@ public class Provider implements QuadTreeElement, Serializable {
   /** ZIP code of the provider's location. */
   public String zip;
   /** FIPS county code of the provider's location. */
-  public String fipsCountyCode;
+  // public String fipsCountyCode;
   /** Phone number of the provider. */
   public String phone;
   /** Type of the provider. */
@@ -830,15 +830,15 @@ public class Provider implements QuadTreeElement, Serializable {
     d.city = line.remove("city");
     d.state = line.remove("state");
     d.zip = line.remove("zip");
-    d.fipsCountyCode = line.remove("fips_county");
+    //d.fipsCountyCode = line.remove("fips_county");
     d.phone = line.remove("phone");
     d.ownership = line.remove("ownership");
 
     d.cmsCategory = line.remove("category");
     d.cmsProviderType = line.remove("provider_type_code");
     d.cmsProviderNum = line.remove("provider_num");
-    // UKC - Handle ODS Codes
-    d.NhsOdsCode = line.remove("provider_num"); // Just temporary for now
+    // UKC - Handle ODS Codes. provider_num was already removed above, so reuse its value.
+    d.NhsOdsCode = d.cmsProviderNum; // Just temporary for now
     d.cmsPin = line.remove("pin");
     if (d.cmsPin != null && d.cmsPin.length() > 14) {
       d.cmsPin = null; // the pin is too long and is probably garbage
@@ -912,6 +912,9 @@ public class Provider implements QuadTreeElement, Serializable {
     if (this.cmsProviderNum == null) {
       this.cmsProviderNum = other.cmsProviderNum;
     }
+    if (this.NhsOdsCode == null) {
+      this.NhsOdsCode = other.NhsOdsCode;
+    }
     if (this.cmsPin == null) {
       this.cmsPin = other.cmsPin;
     }
@@ -948,9 +951,9 @@ public class Provider implements QuadTreeElement, Serializable {
     if (this.zip == null) {
       this.zip = other.zip;
     }
-    if (this.fipsCountyCode == null) {
+/*    if (this.fipsCountyCode == null) {
       this.fipsCountyCode = other.fipsCountyCode;
-    }
+    }*/
     if (this.phone == null) {
       this.phone = other.phone;
     }

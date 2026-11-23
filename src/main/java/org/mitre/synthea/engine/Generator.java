@@ -104,7 +104,7 @@ public class Generator {
   private Module keepPatientsModule;
   private Long maxAttemptsToKeepPatient;
   /** The state to default to */
-  public static String DEFAULT_STATE = "Massachusetts";
+  public static String DEFAULT_STATE = "England";
   private Exporter.ExporterRuntimeOptions exporterRuntimeOptions;
   /**
    * EntityManager is used to manage fixed patient demographics records.
@@ -857,7 +857,7 @@ public class Generator {
     // this is synchronized to ensure all lines for a single person are always printed
     // consecutively
     String deceased = isAlive ? "" : "DECEASED";
-    System.out.format("%d -- %s (%d y/o %s) %s, %s %s (%d)\n", index + 1,
+    System.out.format("%d -- %s (%d y/o %s) %s, %s [%s] (%d)\n", index + 1,
         person.attributes.get(Person.NAME), person.ageInYears(time),
         person.attributes.get(Person.GENDER),
         person.attributes.get(Person.CITY), person.attributes.get(Person.STATE),

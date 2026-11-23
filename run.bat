@@ -6,6 +6,12 @@
 @rem ##########################################################################
 setlocal EnableDelayedExpansion
 
+@rem Clear down the output directory before each run
+IF EXIST "%~dp0output" (
+  ECHO Clearing output directory: %~dp0output
+  RMDIR /S /Q "%~dp0output"
+)
+
 IF "%~1" == "" (
   @rem Just run Synthea with no args
   "%~dp0gradlew.bat" run

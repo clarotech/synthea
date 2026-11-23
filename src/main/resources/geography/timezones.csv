@@ -1,4 +1,4 @@
-STATE,ST,TIMEZONE,TZ
+    STATE,ST,TIMEZONE,TZ
 Alabama,AL,Central Standard Time,CST
 Alaska,AK,Alaska Standard Time,AKST
 Arizona,AZ,Mountain Standard Time,MST
@@ -51,3 +51,4 @@ District of Columbia,DC,Eastern Standard Time,EST
 West Virginia,WV,Eastern Standard Time,EST
 Wisconsin,WI,Central Standard Time,CST
 Wyoming,WY,Mountain Standard Time,MST
+England,ENG,Greenwich Mean Time,GMT

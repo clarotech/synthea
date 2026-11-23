@@ -143,7 +143,7 @@ public class FhirR4Ukc {
     includedResources.clear();
     excludedResources.clear();
     String includedResourcesStr = Config.get("exporter.fhir.included_resources", "").trim();
-    String excludedResourcesStr = Config.get("exporter.fhir.excluded_resources", "").trim();
+    String excludedResourcesStr = Config.get("exporter.fhir.excluded_resources", "Provenance").trim();
 
     List<Class<? extends Resource>> includedResourcesList = Collections.emptyList();
     List<Class<? extends Resource>> excludedResourcesList = Collections.emptyList();
@@ -206,7 +206,7 @@ public class FhirR4Ukc {
 
   @SuppressWarnings("rawtypes")
   private static Map loadLanguageLookup() {
-    String filename = "language_lookup.json";
+    String filename = "uk_language_lookup.json";
     try {
       String json = Utilities.readResource(filename);
       Gson g = new Gson();
@@ -427,7 +427,7 @@ public class FhirR4Ukc {
     //  TODO : Add some variability to this extension.
     if (person.attributes.get(Person.IDENTIFIER_NHS_NUMBER) != null) {
 
-      Extension nhsExtension = new Extension("https://fhir.hl7.org.uk/StructureDefinition/Extension-UKCore-NHSNumberVerificationStatus", new CodeableConcept(new Coding("http://terminology.hl7.org/CodeSystem/v3-NullFlavor", "01", "Number present and verified")));
+      Extension nhsExtension = new Extension("https://fhir.hl7.org.uk/StructureDefinition/Extension-UKCore-NHSNumberVerificationStatus", new CodeableConcept(new Coding("https://fhir.hl7.org.uk/CodeSystem/UKCore-NHSNumberVerificationStatusEngland", "01", "Number present and verified")));
       patientResource.addIdentifier()
           .setSystem("https://fhir.nhs.uk/Id/nhs-number")
           .setValue((String) person.attributes.get(Person.IDENTIFIER_NHS_NUMBER))
