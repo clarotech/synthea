@@ -19,21 +19,11 @@ import org.slf4j.LoggerFactory;
  * etc) and validates Resources conforming to those profiles using the validate method.
  */
 public class ValidationResources {
-  private FhirValidator validatorSTU3;
   private FhirValidator validatorR4;
   static final Logger logger = LoggerFactory.getLogger(ValidationResources.class);
 
   private ValidationResources() {
     // private - use the factory
-  }
-
-  /**
-   * Create FHIR context, validator, and validation chain for FHIR STU3.
-   */
-  public static ValidationResources forSTU3() {
-    ValidationResources vr = new ValidationResources();
-    vr.initializeSTU3();
-    return vr;
   }
 
   /**
@@ -46,22 +36,6 @@ public class ValidationResources {
     ValidationResources vr = new ValidationResources();
     vr.initializeR4(usCoreVersion);
     return vr;
-  }
-
-  private void initializeSTU3() {
-    FhirContext ctx = FhirStu3.getContext();
-    FhirInstanceValidator instanceValidator =
-        new FhirInstanceValidator(ctx);
-    ValidationSupportChain chain = new ValidationSupportChain(
-            new ValidationSupportSTU3(ctx),
-            new DefaultProfileValidationSupport(ctx),
-            new InMemoryTerminologyServerValidationSupport(ctx),
-            new CommonCodeSystemsTerminologyService(ctx)
-    );
-    instanceValidator.setValidationSupport(chain);
-    instanceValidator.setAnyExtensionsAllowed(true);
-    instanceValidator.setErrorForUnknownProfiles(false);
-    validatorSTU3 = ctx.newValidator().registerValidatorModule(instanceValidator);
   }
 
   private void initializeR4(FhirR4.USCoreVersion usCoreVersion) {
@@ -78,17 +52,6 @@ public class ValidationResources {
     instanceValidator.setAnyExtensionsAllowed(true);
     instanceValidator.setErrorForUnknownProfiles(true);
     validatorR4 = ctx.newValidator().registerValidatorModule(instanceValidator);
-  }
-
-  /**
-   * Runs validation on a given resource, logs the results, and returns the response.
-   * @param theResource the resource to be validated
-   * @return ValidationResult
-   */
-  public ValidationResult validateSTU3(IBaseResource theResource) {
-    ValidationResult result = validatorSTU3.validateWithResult(theResource);
-    logIssues(result);
-    return result;
   }
 
   /**

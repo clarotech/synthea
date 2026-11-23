@@ -216,7 +216,7 @@ public class GeneratorTest {
     Generator.GeneratorOptions opts = new Generator.GeneratorOptions();
     opts.population = numberOfPeople;
     Exporter.ExporterRuntimeOptions ero = new Exporter.ExporterRuntimeOptions();
-    ero.enableQueue(SupportedFhirVersion.STU3);
+    ero.enableQueue(SupportedFhirVersion.R4);
 
     // Create and start generator thread
     Generator generator = new Generator(opts, ero);

@@ -58,7 +58,6 @@ public abstract class Exporter {
    * Supported FHIR versions.
    */
   public enum SupportedFhirVersion {
-    STU3,
     R4
   }
 
@@ -287,25 +286,6 @@ public abstract class Exporter {
       valueSetCodeResolver.resolve();
     }
 
-//    if (Config.getAsBoolean("exporter.fhir_stu3.export")) {
-//      File outDirectory = getOutputFolder("fhir_stu3", person);
-//      if (Config.getAsBoolean("exporter.fhir.bulk_data")) {
-//        org.hl7.fhir.dstu3.model.Bundle bundle = FhirStu3.convertToFHIR(person, stopTime);
-//        IParser parser = FhirStu3.getContext().newJsonParser().setPrettyPrint(false);
-//        for (org.hl7.fhir.dstu3.model.Bundle.BundleEntryComponent entry : bundle.getEntry()) {
-//          String filename = entry.getResource().getResourceType().toString() + ".ndjson";
-//          Path outFilePath = outDirectory.toPath().resolve(filename);
-//          String entryJson = parser.encodeResourceToString(entry.getResource());
-//          appendToFile(outFilePath, entryJson);
-//        }
-//      } else {
-//        String bundleJson = FhirStu3.convertToFHIRJson(person, stopTime);
-//        Path outFilePath = outDirectory.toPath().resolve(filename(person, fileTag, "json"));
-//        writeNewFile(outFilePath, bundleJson);
-//      }
-//    }
-
-
     /*
       UK Core IPS Export is here....
      */
@@ -484,14 +464,7 @@ public abstract class Exporter {
 
     if (options.isQueueEnabled()) {
       try {
-        switch (options.queuedFhirVersion()) {
-//          case STU3:
-//            options.recordQueue.put(FhirStu3.convertToFHIRJson(person, stopTime));
-//            break;
-          default:
-            options.recordQueue.put(FhirR4.convertToFHIRJson(person, stopTime));
-            break;
-        }
+        options.recordQueue.put(FhirR4.convertToFHIRJson(person, stopTime));
       } catch (InterruptedException ie) {
         // ignore
       } catch (Exception e) {
@@ -615,18 +588,6 @@ public abstract class Exporter {
 
     try {
       FhirPractitionerExporterR4Ukc.export(generator.getRandomizer(), generator.stop);
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-
-    try {
-      HospitalExporterStu3.export(generator.stop);
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-
-    try {
-      FhirPractitionerExporterStu3.export(generator.stop);
     } catch (Exception e) {
       e.printStackTrace();
     }

@@ -327,56 +327,6 @@ public class PersonTest {
   }
 
   @Test()
-  public void testPersonFhirSTU3Recreation() throws Exception {
-    TestHelper.loadTestProperties();
-    TestHelper.exportOff();
-    Generator.DEFAULT_STATE = Config.get("test_state.default", "Massachusetts");
-    Config.set("exporter.fhir_stu3.export", "true");
-
-    SimpleDateFormat format = new SimpleDateFormat("YYYYMMDD");
-    format.setTimeZone(TimeZone.getTimeZone("UTC"));
-
-    GeneratorOptions options = new GeneratorOptions();
-    options.clinicianSeed = 9L;
-    options.seed = 9L;
-    options.referenceTime = format.parse("20200704").getTime();
-    options.overflow = false;
-
-    Generator generator = new Generator(options);
-    List<List<String>> fileContents = new ArrayList<>();
-
-    // Generate two patients that should be identical. Switch the output directory since
-    // the file names should be identical
-    for (int i = 0; i < 2; i++) {
-      File tempOutputFolder = tempFolder.newFolder();
-      Config.set("exporter.baseDirectory", tempOutputFolder.toString());
-
-      generator.generatePerson(0, 42L);
-
-      // Check that the output files exist
-      File expectedExportFolder = tempOutputFolder.toPath().resolve("fhir_stu3").toFile();
-      assertTrue(expectedExportFolder.exists() && expectedExportFolder.isDirectory());
-
-      for (File txtFile : expectedExportFolder.listFiles()) {
-        if (!txtFile.getName().endsWith(".json")) {
-          continue;
-        }
-        fileContents.add(Files.readAllLines(txtFile.toPath()));
-      }
-    }
-
-
-    // Check that there are exactly two files
-    assertEquals("Expected 2 files, found " + fileContents.size(), 2,
-        fileContents.size());
-
-    // Check that the two files are identical
-    for (int i = 0; i < fileContents.get(0).size(); i++) {
-      assertEquals(fileContents.get(0).get(i), fileContents.get(1).get(i));
-    }
-  }
-
-  @Test()
   public void testPersonRecreationParallel() throws Exception {
     TestHelper.loadTestProperties();
     TestHelper.exportOff();

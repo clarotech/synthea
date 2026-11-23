@@ -13,7 +13,6 @@ import java.util.TimeZone;
 import java.util.UUID;
 
 import org.apache.commons.lang3.time.FastDateFormat;
-import org.hl7.fhir.dstu3.model.Condition;
 import org.mitre.synthea.engine.Components.Attachment;
 import org.mitre.synthea.engine.Components.SampledData;
 import org.mitre.synthea.helpers.TimeSeriesData;
@@ -39,10 +38,7 @@ public abstract class ExportHelper {
   public static String getObservationValue(Observation observation) {
     String value = null;
 
-    if (observation.value instanceof Condition) {
-      Code conditionCode = ((HealthRecord.Entry)observation.value).codes.get(0);
-      value = conditionCode.display;
-    } else if (observation.value instanceof Code) {
+    if (observation.value instanceof Code) {
       value = ((Code)observation.value).display;
     } else if (observation.value instanceof String) {
       value = (String)observation.value;
@@ -142,9 +138,7 @@ public abstract class ExportHelper {
   public static String getObservationType(Observation observation) {
     String type = null;
 
-    if (observation.value instanceof Condition) {
-      type = "text";
-    } else if (observation.value instanceof Code) {
+    if (observation.value instanceof Code) {
       type = "text";
     } else if (observation.value instanceof String) {
       type = "text";
