@@ -93,7 +93,7 @@ public class CPCDSExporter {
   public Map<String, String> overwrittenNPIs = new HashMap<String, String>();
 
   /**
-   * Constructor for the CSVExporter - initialize the 9 specified files and store
+   * Constructor for the CPCDSExporter - initialize the 9 specified files and store
    * the writers in fields.
    */
   private CPCDSExporter() {
@@ -207,15 +207,15 @@ public class CPCDSExporter {
    */
   private static class SingletonHolder {
     /**
-     * Singleton instance of the CSVExporter.
+     * Singleton instance of the CPCDSExporter.
      */
     private static final CPCDSExporter instance = new CPCDSExporter();
   }
 
   /**
-   * Get the current instance of the CSVExporter.
+   * Get the current instance of the CPCDSExporter.
    *
-   * @return the current instance of the CSVExporter.
+   * @return the current instance of the CPCDSExporter.
    */
   public static CPCDSExporter getInstance() {
     return SingletonHolder.instance;

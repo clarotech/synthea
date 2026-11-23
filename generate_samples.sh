@@ -3,12 +3,11 @@
 # and zips them up by type in the ./samples/ subdirectory
 
 ./run_synthea -p 100 \
-  --exporter.fhir.export=true \
-  --exporter.csv.export=true \
+  --exporter.fhir.export=true
 
 mkdir samples
 
-for type in fhir csv
+for type in fhir
 do
   zip -jr samples/synthea_sample_data_${type}_latest.zip output/${type}/
 done

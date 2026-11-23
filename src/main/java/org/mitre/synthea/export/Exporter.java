@@ -372,13 +372,6 @@ public abstract class Exporter {
       Path outFilePath = outDirectory.toPath().resolve(filename(person, fileTag, "json"));
       writeNewFile(outFilePath, json);
     }
-    if (Config.getAsBoolean("exporter.csv.export")) {
-      try {
-        CSVExporter.getInstance().export(person, stopTime);
-      } catch (IOException e) {
-        e.printStackTrace();
-      }
-    }
     if (Config.getAsBoolean("exporter.bfd.export")) {
       try {
         BB2RIFExporter exporter = BB2RIFExporter.getInstance();
@@ -587,15 +580,6 @@ public abstract class Exporter {
 
     if (Config.getAsBoolean("exporter.cdw.export")) {
       CDWExporter.getInstance().writeFactTables();
-    }
-
-    if (Config.getAsBoolean("exporter.csv.export")) {
-      try {
-        CSVExporter.getInstance().exportOrganizationsAndProviders();
-        CSVExporter.getInstance().exportPayers();
-      } catch (IOException e) {
-        e.printStackTrace();
-      }
     }
 
     if (Config.getAsBoolean("exporter.metadata.export", false)) {

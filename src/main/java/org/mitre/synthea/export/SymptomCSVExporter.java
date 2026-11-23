@@ -41,7 +41,7 @@ public class SymptomCSVExporter {
   private static final String NEWLINE = System.lineSeparator();
 
   /**
-   * Constructor for the CSVExporter - initialize the 9 specified files and store
+   * Constructor for the SymptomCSVExporter - initialize the 9 specified files and store
    * the writers in fields.
    */
   private SymptomCSVExporter() {
@@ -93,7 +93,7 @@ public class SymptomCSVExporter {
    */
   private static class SingletonHolder {
     /**
-     * Singleton instance of the CSVExporter.
+     * Singleton instance of the SymptomCSVExporter.
      */
     private static final SymptomCSVExporter instance = new SymptomCSVExporter();
   }

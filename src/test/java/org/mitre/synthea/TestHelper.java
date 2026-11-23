@@ -118,7 +118,6 @@ public abstract class TestHelper {
     Config.set("exporter.hospital.fhir.export", "false");
     Config.set("exporter.practitioner.fhir.export", "false");
     Config.set("exporter.json.export", "false");
-    Config.set("exporter.csv.export", "false");
     Config.set("exporter.cpcds.export", "false");
     Config.set("exporter.bfd.export", "false");
     Config.set("exporter.cdw.export", "false");

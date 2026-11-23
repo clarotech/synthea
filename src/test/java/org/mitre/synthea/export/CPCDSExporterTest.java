@@ -27,7 +27,6 @@ public class CPCDSExporterTest {
     TestHelper.loadTestProperties();
     Generator.DEFAULT_STATE = Config.get("test_state.default", "Massachusetts");
     Config.set("exporter.cpcds.export", "true");
-    Config.set("exporter.csv.folder_per_run", "false");
     File tempOutputFolder = tempFolder.newFolder();
     Config.set("exporter.baseDirectory", tempOutputFolder.toString());
 
