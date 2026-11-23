@@ -218,19 +218,6 @@ shadowJar {
 task uberJar() {
 }
 
-task flexporter(type: JavaExec) {
-  group = 'Application'
-  description = 'Apply transformations to FHIR'
-  classpath sourceSets.main.runtimeClasspath
-  mainClass = "RunFlexporter"
-  // args are called "arams" because they are called with -P,
-  // ex. gradle run -Params="['arg1', 'args2']"
-  // see https://stackoverflow.com/questions/27604283/gradle-task-pass-arguments-to-java-application
-  if (project.hasProperty("arams")) {
-    args Eval.me(arams)
-  }
-}
-
 task concepts(type: JavaExec) {
   group = 'Application'
   description = 'Create a list of simulated concepts'

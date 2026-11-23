@@ -32,10 +32,6 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.hl7.fhir.r4.model.Parameters;
 import org.hl7.fhir.r4.model.StringType;
 import org.mitre.synthea.engine.Generator;
-import org.mitre.synthea.export.flexporter.Actions;
-import org.mitre.synthea.export.flexporter.FhirPathUtils;
-import org.mitre.synthea.export.flexporter.FlexporterJavascriptContext;
-import org.mitre.synthea.export.flexporter.Mapping;
 import org.mitre.synthea.helpers.Config;
 import org.mitre.synthea.helpers.TransitionMetrics;
 import org.mitre.synthea.helpers.Utilities;
@@ -146,7 +142,6 @@ public abstract class Exporter {
         !Config.get("generate.terminology_service_url", "").isEmpty();
     private BlockingQueue<String> recordQueue;
     private SupportedFhirVersion fhirVersion;
-    private List<Mapping> flexporterMappings;
 
     public ExporterRuntimeOptions() {
       yearsOfHistory = Config.getAsInteger("exporter.years_of_history", 10);
@@ -161,7 +156,6 @@ public abstract class Exporter {
       terminologyService = init.terminologyService;
       recordQueue = init.recordQueue;
       fhirVersion = init.fhirVersion;
-      flexporterMappings = init.flexporterMappings;
     }
 
     /**
@@ -198,19 +192,6 @@ public abstract class Exporter {
      */
     public boolean isRecordQueueEmpty() {
       return recordQueue == null || recordQueue.size() == 0;
-    }
-
-    /**
-     * Register a new Flexporter mapping to be applied to Bundles from the FHIR exporter.
-     * Multiple mappings may be added and will be processed in order.
-     * @param mapping Flexporter mapping to add to list
-     */
-    public void addFlexporterMapping(Mapping mapping) {
-      if (this.flexporterMappings == null) {
-        this.flexporterMappings = new ArrayList<>();
-      }
-
-      this.flexporterMappings.add(mapping);
     }
   }
 
@@ -324,21 +305,6 @@ public abstract class Exporter {
       File outDirectoryUKC = getOutputFolder("fhir-ukc", person);
 
       org.hl7.fhir.r4.model.Bundle bundle = FhirR4.convertToFHIR(person, stopTime);
-
-      if (options.flexporterMappings != null) {
-        FlexporterJavascriptContext fjContext = null;
-
-        for (Mapping mapping : options.flexporterMappings) {
-          if (FhirPathUtils.appliesToBundle(bundle, mapping.applicability, mapping.variables)) {
-            if (fjContext == null) {
-              // only set this the first time it is actually used
-              // TODO: figure out how to silence the truffle warnings
-              fjContext = new FlexporterJavascriptContext();
-            }
-            bundle = Actions.applyMapping(bundle, mapping, person, fjContext);
-          }
-        }
-      }
 
       IParser parser = FhirR4.getContext().newJsonParser();
       if (Config.getAsBoolean("exporter.fhir.bulk_data")) {
