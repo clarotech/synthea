@@ -68,10 +68,13 @@ Follow-up items raised while localising Synthea to England
 
 ## FHIR UK Core export (`FhirR4Ukc.java`)
 
-- [ ] `immunization()` (`FhirR4Ukc.java:1981`) only adds the `UKCore-Immunization`
-  profile and `location` when `USE_US_CORE_IG` is true, so setting
-  `exporter.fhir.use_us_core_ig = false` silently drops the UK Core profile. Gate it
-  on the UK Core setting instead (or not at all).
+- [x] `immunization()` now always adds the `UKCore-Immunization` profile (it used to
+  depend on `exporter.fhir.use_us_core_ig`).
+- [x] Immunization `location` no longer depends on `exporter.fhir.use_us_core_ig`: the
+  UK Core export now always writes provider `Location` resources and `Encounter.location`.
+- [ ] Other UK Core resources still only copy the encounter location when
+  `USE_US_CORE_IG` is true (e.g. `Procedure`, `ImagingStudy`), and `Location` gets the
+  `us-core-location` profile rather than `UKCore-Location`.
 - [ ] Immunization `vaccineCode` uses `CVX_URI` (US CDC vaccine codes). UK Core
   expects SNOMED CT / dm+d vaccine codes, so the resources won't validate against
   the UK Core profile. Map the vaccines to SNOMED CT.

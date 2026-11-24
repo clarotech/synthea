@@ -709,32 +709,30 @@ public class FhirR4Ukc {
       }
     }
     encounterResource.getServiceProvider().setDisplay(provider.name);
-    if (USE_US_CORE_IG) {
-      String referenceUrl;
-      String display;
-      if (TRANSACTION_BUNDLE) {
-        if (encounter.type.equals(EncounterType.VIRTUAL.toString())) {
-          referenceUrl = ExportHelper.buildFhirSearchUrl("Location",
-              FhirR4PatientHome.getPatientHome().getId());
-          display = "Patient's Home";
-        } else {
-          referenceUrl = ExportHelper.buildFhirSearchUrl("Location",
-              provider.getResourceLocationID());
-          display = provider.name;
-        }
+    String referenceUrl;
+    String display;
+    if (TRANSACTION_BUNDLE) {
+      if (encounter.type.equals(EncounterType.VIRTUAL.toString())) {
+        referenceUrl = ExportHelper.buildFhirSearchUrl("Location",
+            FhirR4PatientHome.getPatientHome().getId());
+        display = "Patient's Home";
       } else {
-        if (encounter.type.equals(EncounterType.VIRTUAL.toString())) {
-          referenceUrl = addPatientHomeLocation(bundle);
-          display = "Patient's Home";
-        } else {
-          referenceUrl = findLocationUrl(provider, bundle);
-          display = provider.name;
-        }
+        referenceUrl = ExportHelper.buildFhirSearchUrl("Location",
+            provider.getResourceLocationID());
+        display = provider.name;
       }
-      encounterResource.addLocation().setLocation(new Reference()
-          .setReference(referenceUrl)
-          .setDisplay(display));
+    } else {
+      if (encounter.type.equals(EncounterType.VIRTUAL.toString())) {
+        referenceUrl = addPatientHomeLocation(bundle);
+        display = "Patient's Home";
+      } else {
+        referenceUrl = findLocationUrl(provider, bundle);
+        display = provider.name;
+      }
     }
+    encounterResource.addLocation().setLocation(new Reference()
+        .setReference(referenceUrl)
+        .setDisplay(display));
 
     if (encounter.clinician != null) {
       if (TRANSACTION_BUNDLE) {
@@ -1656,12 +1654,10 @@ public class FhirR4Ukc {
       BundleEntryComponent personEntry, Bundle bundle, BundleEntryComponent encounterEntry,
       HealthRecord.Entry immunization) {
     Immunization immResource = new Immunization();
-    if (USE_US_CORE_IG) {
-      Meta meta = new Meta();
-      meta.addProfile(
-          "https://fhir.hl7.org.uk/StructureDefinition/UKCore-Immunization");
-      immResource.setMeta(meta);
-    }
+    Meta meta = new Meta();
+    meta.addProfile(
+        "https://fhir.hl7.org.uk/StructureDefinition/UKCore-Immunization");
+    immResource.setMeta(meta);
 
     immResource.setStatus(ImmunizationStatus.COMPLETED);
     immResource.setOccurrence(convertFhirDateTime(immunization.start, true));
@@ -1669,11 +1665,9 @@ public class FhirR4Ukc {
     immResource.setPrimarySource(true);
     immResource.setPatient(new Reference(personEntry.getFullUrl()));
     immResource.setEncounter(new Reference(encounterEntry.getFullUrl()));
-    if (USE_US_CORE_IG) {
-      org.hl7.fhir.r4.model.Encounter encounterResource =
-          (org.hl7.fhir.r4.model.Encounter) encounterEntry.getResource();
-      immResource.setLocation(encounterResource.getLocationFirstRep().getLocation());
-    }
+    org.hl7.fhir.r4.model.Encounter encounterResource =
+        (org.hl7.fhir.r4.model.Encounter) encounterEntry.getResource();
+    immResource.setLocation(encounterResource.getLocationFirstRep().getLocation());
 
     BundleEntryComponent immunizationEntry =
         newEntry(bundle, immResource, immunization.uuid.toString());
@@ -2588,10 +2582,7 @@ public class FhirR4Ukc {
       organizationResource.addTelecom(contactPoint);
     }
 
-    org.hl7.fhir.r4.model.Location location = null;
-    if (USE_US_CORE_IG) {
-      location = providerLocation(bundle, provider);
-    }
+    org.hl7.fhir.r4.model.Location location = providerLocation(bundle, provider);
 
     BundleEntryComponent entry = newEntry(bundle, organizationResource, provider.uuid);
     // add location to bundle *after* organization to ensure no forward reference
