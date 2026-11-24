@@ -1,7 +1,7 @@
 # UK Synthea – outstanding work
 
 Follow-up items raised while localising Synthea to England
-(branch `uk-geography-nhs-providers`, commit `6e099fb8`).
+(commit `a41f81d7`, now merged into `master`).
 
 ## Tests
 
@@ -66,6 +66,16 @@ Follow-up items raised while localising Synthea to England
   `ExplanationOfBenefit` resources, since the UK has no payer concept (the NHS is
   modelled as a single free payer).
 
+## FHIR UK Core export (`FhirR4Ukc.java`)
+
+- [ ] `immunization()` (`FhirR4Ukc.java:1981`) only adds the `UKCore-Immunization`
+  profile and `location` when `USE_US_CORE_IG` is true, so setting
+  `exporter.fhir.use_us_core_ig = false` silently drops the UK Core profile. Gate it
+  on the UK Core setting instead (or not at all).
+- [ ] Immunization `vaccineCode` uses `CVX_URI` (US CDC vaccine codes). UK Core
+  expects SNOMED CT / dm+d vaccine codes, so the resources won't validate against
+  the UK Core profile. Map the vaccines to SNOMED CT.
+
 ## Code and config tidy-up
 
 - [ ] `Location.java:343` – the comment still says it falls back to "some random US
@@ -81,8 +91,3 @@ Follow-up items raised while localising Synthea to England
 
 - [x] Add the generator scripts (`make_uk_demographics.py`, `make_uk_zipcodes.py`,
   `make_uk_providers.py`) to the repo: now in `scripts/uk/`, documented in `CLAUDE.md`.
-
-## Git
-
-- [ ] Open a pull request for `uk-geography-nhs-providers`:
-  https://github.com/clarotech/synthea/pull/new/uk-geography-nhs-providers
